@@ -1,0 +1,102 @@
+GET http://localhost:8080/exchange?from=AUD&to=BDT&amount=10
+
+###
+GET http://localhost:8080/exchange?from=RUB&to=EUR&amount=10
+
+###
+GET http://localhost:8080/exchange?from=EUR&to=RUB&amount=10
+
+
+###
+PATCH http://localhost:8080/exchangeRate/EURRUB
+Content-Type: application/x-www-form-urlencoded
+
+rate=100
+
+###
+POST http://localhost:8080/exchangeRates
+Content-Type: application/x-www-form-urlencoded
+
+baseCurrencyCode=EUR&targetCurrencyCode=RUB&rate=100
+
+###
+GET http://localhost:8080/exchangeRa
+Accept: application/json
+
+###
+GET http://localhost:8080/exchangeRates
+Accept: application/json
+
+
+###
+GET http://localhost:8080/exchangeRate/EUR
+Accept: application/json
+
+###
+GET http://localhost:8080/exchangeRate/EURRUB
+Accept: application/json
+
+###
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=ГРУЗИНы&code=ГРУЗИЯt&sign=ГРУЗИН
+
+###
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=Грзин&code=ГРУ
+
+###
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=POP&code=PPP&sign=p
+
+###
+
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=Грузин&code=ГРУ&sign=GGG
+
+###
+
+GET http://localhost:8080/currencies
+Accept: application/json
+
+<> 2024-02-08T151241.200.json
+<> 2024-02-08T151143.200.json
+<> 2024-02-07T230102.200.json
+<> 2024-02-07T224451.200.json
+<> 2024-02-07T224051.500.json
+<> 2024-02-07T224033.200.json
+<> 2024-02-07T223825.500.json
+<> 2024-02-07T215845.200.json
+<> 2024-02-07T211254.200.json
+<> 2024-02-07T204929.200.json
+
+###
+
+GET http://localhost:8080/currency/USD
+Accept: application/json
+
+<> 2024-02-08T151412.200.json
+<> 2024-02-08T151305.200.json
+
+###
+
+GET http://localhost:8080/currency/
+Accept: application/json
+
+<> 2024-02-08T151417.400.json
+<> 2024-02-08T144328.500.json
+<> 2024-02-08T144223.404.json
+<> 2024-02-08T144042.200.json
+<> 2024-02-07T230259.200.json
+<> 2024-02-07T230107.200.json
+<> 2024-02-07T225747.200.json
+<> 2024-02-07T225623.200.json
+
+###
