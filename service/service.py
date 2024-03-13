@@ -25,7 +25,6 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             from_currency = query_params['from'][0]
             to_currency = query_params['to'][0]
             amount = float(Decimal(query_params['amount'][0]))
-
             try:
                 response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(
                     from_currency + to_currency)
@@ -56,7 +55,7 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(data.to_dict()).encode('utf-8'))
 
 
-host = "localhost"
-port = 8080
-server = http.server.HTTPServer((host, port), ServiceExchange)
-server.serve_forever()
+# host = "localhost"
+# port = 8080
+# server = http.server.HTTPServer((host, port), ServiceExchange)
+# server.serve_forever()

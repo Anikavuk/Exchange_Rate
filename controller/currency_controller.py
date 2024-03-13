@@ -15,7 +15,7 @@ logger.add('my_errors.log', format="{time} {level} {message}", level="ERROR", se
 class CurrencyController(BaseHTTPRequestHandler):
     """Класс обработчик запроса валюты"""
     @logger.catch
-    def do_GET(self):
+    def do_GET(self, code):
         """
         Метод получения валюты
         """

@@ -6,7 +6,6 @@ import json
 import sqlite3
 import urllib.request
 import env
-import dto.rates_DTO
 import dao.rates_DAO
 from urllib.parse import parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer

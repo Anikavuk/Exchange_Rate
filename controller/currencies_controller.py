@@ -77,3 +77,4 @@ class CurrenciesController(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
 
+
