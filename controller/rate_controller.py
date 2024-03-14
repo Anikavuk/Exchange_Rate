@@ -25,7 +25,7 @@ class RateController(BaseHTTPRequestHandler):
         code = parsed_url.path.split('/')[-1]
         if len(code) == 6:
             try:
-                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(code)
+                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
                 logger.error(response)
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
@@ -68,7 +68,7 @@ class RateController(BaseHTTPRequestHandler):
                 save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate(code[:3],
                                                                                             code[3:],
                                                                                             rate)
-                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(code)
+                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()

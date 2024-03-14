@@ -66,7 +66,7 @@ class RatesController(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(f"A currency pair with this code already exists".encode('utf-8'))
                     return
-                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(baseCurrency+targetCurrency)
+                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(baseCurrency + targetCurrency)
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()

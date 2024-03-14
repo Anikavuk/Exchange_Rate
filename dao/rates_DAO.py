@@ -12,7 +12,7 @@ class ExchangeDAO:
     def __init__(self, db_file):
         self.__file = db_file
 
-    def getting_specific_exchange_rate(self, code):
+    def get_specific_exchange_rate(self, code: object) -> object:
         """Метод получения конкретного обменного курса валют.
         :@param code - код валюты, например, 'USDEUR'
         """
