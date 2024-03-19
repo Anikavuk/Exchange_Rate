@@ -26,6 +26,8 @@ class ExchangeDAO:
                         (base.id, target.id))
             response = cur.fetchall()
             conn.commit()
+        if not response:
+            return []
         return dto.rates_DTO.ExchangeRatesDTO(response[0][0], baseCurrency, targetCurrency, response[0][3]).to_dict()
 
     def all_exchange_rates(self):

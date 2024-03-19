@@ -45,6 +45,3 @@ class CurrencyDAO:
             cur = conn.cursor()
             cur.execute('insert into currencies values (NULL, ?, ?, ?)', (code, full_name, sign))
             conn.commit()
-#
-# aaa = CurrencyDAO(env.path_to_database)
-# print(aaa.find_by_code('BDT'))

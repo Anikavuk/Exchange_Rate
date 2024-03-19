@@ -10,22 +10,32 @@ import loguru
 import dao.rates_DAO
 import dto.service_DTO
 import env
+from dao.currencies_DAO import CurrencyDAO
 
 loguru.logger.add('../service.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
-
-
-
 class ServiceExchange(http.server.BaseHTTPRequestHandler):
     """Класс обработчик запроса GET http://localhost:8080/exchange?from=EUR&to=RUB&amount=10"""
-
-    def check_specific_exchange_rate(self, to_currency, from_currency):
-        try:
-            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(from_currency + to_currency)
-        except IndexError:
-            response = []
-        return response
+    @staticmethod
+    def find_rate(from_currency, to_currency):
+        value = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
+            from_currency + to_currency)
+        if value:
+            return value['rate']
+        if not value:
+            value = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
+                to_currency + from_currency)
+            if value:
+                return 1 / value['rate']
+        value1 = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
+            'USD' + from_currency)
+        value2 = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
+            'USD' + to_currency)
+        if not value1 or not value2:
+            raise IndexError
+        cross_rate = value2['rate'] / value1['rate']
+        return cross_rate
 
     @loguru.logger.catch
     def do_GET(self):
@@ -35,18 +45,10 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             from_currency = query_params['from'][0]
             to_currency = query_params['to'][0]
             amount = float(Decimal(query_params['amount'][0]))
-            response = self.check_specific_exchange_rate(from_currency,to_currency)
-            if not response:
-                response = self.check_specific_exchange_rate(to_currency, from_currency)
-                rate = 1/float(response['rate'])
-            elif:
-                response = self.check_specific_exchange_rate(to_currency, from_currency)
+            rate = self.find_rate(from_currency, to_currency)
 
-
-
-
-            data = dto.service_DTO.ServiceDTO(response['baseCurrency'],
-                                              response['targetCurrency'],
+            data = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
+                                              CurrencyDAO(env.path_to_database).find_by_code(to_currency).__dict__,
                                               round(rate, 6),
                                               amount,
                                               round(float(rate * amount), 6))
@@ -54,6 +56,7 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(data.to_dict()).encode('utf-8'))
+
 
 host = "localhost"
 port = 8080
@@ -63,23 +66,3 @@ server.serve_forever()
 
 
 
-
-
-            # try:
-            #     response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(
-            #         from_currency + to_currency)
-            #     rate = float(response['rate'])
-            # except IndexError:
-            #     try:
-            #         response = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(
-            #             to_currency + from_currency)
-            #         rate = float(1 / Decimal(response['rate']))
-            #     except IndexError:
-            #         currency_USD = 'USD'
-            #         response_from = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(
-            #             currency_USD + from_currency)
-            #         response_to = dao.rates_DAO.ExchangeDAO(env.path_to_database).getting_specific_exchange_rate(
-            #             currency_USD + to_currency)
-            #         rate = round(float(Decimal(response_to['rate']) / Decimal(response_from['rate'])), 6)
-            #         response = {'baseCurrency': response_from['targetCurrency'],
-            #                     'targetCurrency': response_to['targetCurrency'], 'rate': rate}
