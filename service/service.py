@@ -41,10 +41,16 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_url = urllib.parse.urlparse(self.path)
         query_params = parse_qs(parsed_url.query)
-        if 'from' in query_params and 'to' in query_params and 'amount' in query_params:
+        if 'from' not in query_params or 'to' not in query_params or 'amount' not in query_params:
+            self.send_response(400)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(f"message: Валюта не найдена".encode('utf-8'))
+        else:
             from_currency = query_params['from'][0]
             to_currency = query_params['to'][0]
             amount = float(Decimal(query_params['amount'][0]))
+
             rate = self.find_rate(from_currency, to_currency)
 
             data = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
@@ -56,6 +62,7 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(data.to_dict()).encode('utf-8'))
+
 
 
 host = "localhost"
