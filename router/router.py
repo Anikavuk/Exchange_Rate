@@ -4,6 +4,8 @@ from controller.rate_controller import RateController
 from controller.rates_controller import RatesController
 from service.service import ServiceExchange
 
+# Словарь с соответствием URL-адресов и классов обработчиков
+
 routes = {'/currencies': CurrenciesController,
           '/currency': CurrencyController,
           '/exchangeRates': RatesController,

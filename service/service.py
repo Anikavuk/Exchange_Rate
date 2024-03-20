@@ -12,7 +12,7 @@ import dto.service_DTO
 import env
 from dao.currencies_DAO import CurrencyDAO
 
-loguru.logger.add('../service.log', format="{time} {level} {message}", level="ERROR", serialize=True)
+loguru.logger.add('service.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
 class ServiceExchange(http.server.BaseHTTPRequestHandler):
@@ -64,11 +64,11 @@ class ServiceExchange(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(data.to_dict()).encode('utf-8'))
 
 
-
-host = "localhost"
-port = 8080
-server = http.server.HTTPServer((host, port), ServiceExchange)
-server.serve_forever()
+#
+# host = "localhost"
+# port = 8080
+# server = http.server.HTTPServer((host, port), ServiceExchange)
+# server.serve_forever()
 
 
 
