@@ -1,8 +1,13 @@
 import urllib
-from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
 import urllib.parse
+from urllib.parse import urlparse
+from http.server import SimpleHTTPRequestHandler
+
+from loguru import logger
+
 import router.router
-import controller.currency_controller
+
+logger.add('server.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
 
 class BaseHandler(SimpleHTTPRequestHandler):
@@ -38,18 +43,42 @@ class BaseHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b'Response from PATCH')
 
-class Server(BaseHandler):
 
+class Server(BaseHandler):
+    @logger.catch
     def do_GET(self):
+        parsed_url = urlparse(self.path)
+        # path = parsed_url.path.split('/')[-1] # вернет exchangeRates
+        path = parsed_url.path # вернет /exchangeRates
+
+        if path in router.router.routes:
+            handler = router.router.routes[path]()  #RatesController()
+            handler.handle_request('GET')
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'Not Found')
+
+    @logger.catch
+    def do_POST(self):
         parsed_url = urllib.urlparse(self.path)
         path = parsed_url.path
 
         if path in router.router.routes:
             handler = router.router.routes[path]()
-            handler.handle_request('GET')
-        if path in router.router.routes:
-            handler = router.router.routes[path]()
             handler.handle_request('POST')
+
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'Not Found')
+
+    def do_PATCH(self):
+        parsed_url = urllib.urlparse(self.path)
+        path = parsed_url.path
+
         if path in router.router.routes:
             handler = router.router.routes[path]()
             handler.handle_request('PATCH')

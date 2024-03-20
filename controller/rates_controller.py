@@ -20,9 +20,7 @@ class RatesController(BaseHTTPRequestHandler):
     """Класс обработчик запроса http://localhost:8080/exchangeRates"""
     @logger.catch
     def do_GET(self):
-        # parsed_url = urllib.parse.urlparse(self.path)
-        # code = parsed_url.path.split('/')[-1]
-        # if code == 'exchangeRates':
+
         try:
             response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
             logger.debug(response)
@@ -35,7 +33,7 @@ class RatesController(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        else:
+        except:
             self.send_response(400)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()

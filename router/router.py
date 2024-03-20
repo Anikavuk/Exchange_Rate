@@ -6,8 +6,8 @@ from service.service import ServiceExchange
 
 # Словарь с соответствием URL-адресов и классов обработчиков
 
-routes = {'/currencies': CurrenciesController,
-          '/currency': CurrencyController,
-          '/exchangeRates': RatesController,
+routes = {'/currency': CurrencyController,
+          '/currencies': CurrenciesController,
           '/exchangeRate': RateController,
+          '/exchangeRates': RatesController,
           '/exchange': ServiceExchange}
