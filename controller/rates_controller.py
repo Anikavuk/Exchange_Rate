@@ -33,7 +33,7 @@ class RatesController(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        except:
+        except Exception:
             self.send_response(400)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
