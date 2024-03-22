@@ -16,28 +16,28 @@ from loguru import logger
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
 
-class RatesController(BaseHTTPRequestHandler):
+class RatesController:
     """Класс обработчик запроса http://localhost:8080/exchangeRates"""
     @logger.catch
-    def do_GET(self):
+    def do_GET(self, handler):
 
         try:
             response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
             logger.debug(response)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps(response).encode('utf-8'))
+            handler.send_response(200)
+            handler.send_header('Content-Type', 'application/json')
+            handler.end_headers()
+            handler.wfile.write(json.dumps(response).encode('utf-8'))
         except sqlite3.DatabaseError as e:
-            self.send_response(500)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+            handler.send_response(500)
+            handler.send_header('Content-Type', 'application/json')
+            handler.end_headers()
+            handler.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
         except Exception:
-            self.send_response(400)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(f"Запрос не верен".encode('utf-8'))
+            handler.send_response(400)
+            handler.send_header('Content-Type', 'application/json')
+            handler.end_headers()
+            handler.wfile.write(f"Запрос не верен".encode('utf-8'))
 
     @logger.catch
     def do_POST(self):
