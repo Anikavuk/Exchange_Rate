@@ -14,15 +14,15 @@ from loguru import logger
 logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
-class RateController(BaseHTTPRequestHandler):
+class RateController:
     """Класс обработчик запроса обменного курса"""
     @logger.catch
-    def do_GET(self):
+    def do_GET(self, code):
         """
         Метод получения конкретного обменного курса
         """
-        parsed_url = urllib.parse.urlparse(self.path)
-        code = parsed_url.path.split('/')[-1]
+        # parsed_url = urllib.parse.urlparse(self.path)
+        # code = parsed_url.path.split('/')[-1]
         if len(code) == 6:
             try:
                 response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
@@ -31,6 +31,7 @@ class RateController(BaseHTTPRequestHandler):
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
             except IndexError:
                 self.send_response(404)
                 self.send_header('Content-Type', 'application/json')

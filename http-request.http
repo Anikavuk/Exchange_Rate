@@ -20,7 +20,7 @@ rate=100
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
 
-baseCurrencyCode=WWW&targetCurrencyCode=GGG&rate=100
+baseCurrencyCode=ttt&targetCurrencyCode=GGG&rate=100000
 
 ###
 GET http://localhost:8080/exchangeRa
@@ -36,7 +36,7 @@ GET http://localhost:8080/exchangeRate/EUR
 Accept: application/json
 
 ###
-GET http://localhost:8080/exchangeRate/EURRUB
+GET http://localhost:8080/exchangeRate/USDRUB
 Accept: application/json
 
 ###

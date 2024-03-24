@@ -14,7 +14,7 @@ from loguru import logger
 logger.add('errors.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
 
-class CurrenciesController(BaseHTTPRequestHandler):
+class CurrenciesController:
     """Класс обработчик запроса"""
     @logger.catch
     def do_GET(self):

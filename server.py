@@ -6,6 +6,8 @@ from http.server import SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 from loguru import logger
 
 import router.router
+from controller.rate_controller import RateController
+from controller.rates_controller import RatesController
 
 logger.add('server.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -31,12 +33,12 @@ logger.add('server.log', format="{time} {level} {message}", level="DEBUG", seria
 #         self.end_headers()
 #         self.wfile.write(b'Response from GET')
 #
-#     # def do_POST(self):
-#     #     self.send_response(200)
-#     #     self.send_header('Content-type', 'text/html')
-#     #     self.end_headers()
-#     #     self.wfile.write(b'Response from POST')
-#     #
+#     def do_POST(self):
+#         self.send_response(200)
+#         self.send_header('Content-type', 'text/html')
+#         self.end_headers()
+#         self.wfile.write(b'Response from POST')
+# #     #
 #     # def do_PATCH(self):
 #     #     self.send_response(200)
 #     #     self.send_header('Content-type', 'text/html')
@@ -52,38 +54,44 @@ class Server(BaseHTTPRequestHandler):
         path = parsed_url.path # вернет /exchangeRates
 
         if path in router.router.routes:
-            handler = router.router.routes[path]()  #RatesController()
-            handler.do_GET()
+            handler_class = router.router.routes[path]  #RatesController()
+            handler_instance = handler_class()
+            # if isinstance(handler_instance, RatesController):
+            handler_instance.do_GET(self)
+            # if isinstance(handler_instance, RateController):
+            #     code = parsed_url.path.split('/')[-1]
+            #     handler_instance.do_GET(self, code)
         else:
             self.send_response(404)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(b'Not Found')
 
-    # @logger.catch
-    # def do_POST(self):
-    #     parsed_url = urllib.urlparse(self.path)
-    #     path = parsed_url.path
-    #
-    #     if path in router.router.routes:
-    #         handler = router.router.routes[path]()
-    #         handler.handle_request('POST')
-    #
-    #     else:
-    #         self.send_response(404)
-    #         self.send_header('Content-type', 'text/html')
-    #         self.end_headers()
-    #         self.wfile.write(b'Not Found')
-    #
-    # def do_PATCH(self):
-    #     parsed_url = urllib.urlparse(self.path)
-    #     path = parsed_url.path
-    #
-    #     if path in router.router.routes:
-    #         handler = router.router.routes[path]()
-    #         handler.handle_request('PATCH')
-    #     else:
-    #         self.send_response(404)
-    #         self.send_header('Content-type', 'text/html')
-    #         self.end_headers()
-    #         self.wfile.write(b'Not Found')
+    @logger.catch
+    def do_POST(self):
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
+
+        if path in router.router.routes:
+            handler_class = router.router.routes[path]  # RatesController()
+            handler_instance = handler_class()
+            handler_class.do_POST(self)
+
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'Not Found')
+
+    def do_PATCH(self):
+        parsed_url = urllib.urlparse(self.path)
+        path = parsed_url.path
+
+        if path in router.router.routes:
+            handler = router.router.routes[path]()
+            handler.handle_request('PATCH')
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'Not Found')
