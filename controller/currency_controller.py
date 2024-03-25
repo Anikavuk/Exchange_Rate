@@ -1,11 +1,9 @@
 import json
 import sqlite3
-import urllib.request
+
 import dao.currencies_DAO
 import env
 import dto.currencies_DTO
-from urllib.parse import urlencode
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from loguru import logger
 
 

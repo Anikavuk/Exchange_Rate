@@ -2,7 +2,7 @@ import urllib
 import urllib.parse
 from decimal import Decimal
 from urllib.parse import urlparse, parse_qs
-from http.server import SimpleHTTPRequestHandler, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
 
 from loguru import logger
 

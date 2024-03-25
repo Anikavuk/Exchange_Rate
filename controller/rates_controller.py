@@ -8,7 +8,7 @@ import urllib.request
 import env
 import dao.rates_DAO
 from urllib.parse import parse_qs
-from http.server import BaseHTTPRequestHandler, HTTPServer
+
 from loguru import logger
 
 

@@ -5,7 +5,6 @@ import env
 import dto.currencies_DTO
 import dao.currencies_DAO
 from urllib.parse import parse_qs
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from dao.currencies_DAO import CurrencyDAO
 from loguru import logger
 
@@ -73,5 +72,3 @@ class CurrenciesController:
                 self.send_header('Content-Type', 'text/plain')
                 self.end_headers()
                 self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-
-

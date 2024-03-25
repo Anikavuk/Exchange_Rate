@@ -3,7 +3,7 @@ import sqlite3
 import urllib.request
 import dao.rates_DAO
 import env
-import dto
+
 from urllib.parse import urlencode
 
 from loguru import logger
@@ -82,8 +82,3 @@ class RateController:
                 self.send_header('Content-Type', 'text/plain')
                 self.end_headers()
                 self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-
-# host = "localhost"
-# port = 8080
-# server = http.server.HTTPServer((host, port), RateController)
-# server.serve_forever()
