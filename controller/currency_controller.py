@@ -12,15 +12,13 @@ from loguru import logger
 logger.add('my_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
-class CurrencyController(BaseHTTPRequestHandler):
-    """Класс обработчик запроса валюты"""
+class CurrencyController:
+    """Класс обработчик запроса GET http://localhost:8080/currency/USD"""
     @logger.catch
     def do_GET(self, code):
         """
-        Метод получения валюты
+        Метод получения конкретной валюты
         """
-        parsed_url = urllib.parse.urlparse(self.path)
-        code = parsed_url.path.split('/')[-1]
         if len(code) == 3:
             try:
                 response = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code)

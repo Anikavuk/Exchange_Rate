@@ -36,7 +36,7 @@ GET http://localhost:8080/exchangeRate/EUR
 Accept: application/json
 
 ###
-GET http://localhost:8080/exchangeRate/USDRUB
+GET http://localhost:8080/exchangeRate/USDEUR
 Accept: application/json
 
 ###

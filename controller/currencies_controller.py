@@ -18,26 +18,23 @@ class CurrenciesController:
     """Класс обработчик запроса"""
     @logger.catch
     def do_GET(self):
-        parsed_url = urllib.parse.urlparse(self.path)
-        code = parsed_url.path.split('/')[-1]
-        if code == 'currencies':
-            try:
-                response = CurrencyDAO(env.path_to_database).all_currencies()
-                logger.debug(response)
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-            except sqlite3.DatabaseError as e:
-                self.send_response(500)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        if not code:
-            self.send_response(400)
+        try:
+            response = CurrencyDAO(env.path_to_database).all_currencies()
+            logger.debug(response)
+            self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(f"Код валюты {code} отсутствует в адресе".encode('utf-8'))
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+        except sqlite3.DatabaseError as e:
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+        # if not code:
+        #     self.send_response(400)
+        #     self.send_header('Content-Type', 'application/json')
+        #     self.end_headers()
+        #     self.wfile.write(f"Код валюты {code} отсутствует в адресе".encode('utf-8'))
 
     @logger.catch
     def do_POST(self):

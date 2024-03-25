@@ -1,66 +1,43 @@
 import urllib
 import urllib.parse
-from urllib.parse import urlparse
+from decimal import Decimal
+from urllib.parse import urlparse, parse_qs
 from http.server import SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 
 from loguru import logger
 
 import router.router
+from controller.currencies_controller import CurrenciesController
+from controller.currency_controller import CurrencyController
 from controller.rate_controller import RateController
 from controller.rates_controller import RatesController
+from service.service import ServiceExchange
 
 logger.add('server.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
-
-
-# class BaseHandler(SimpleHTTPRequestHandler):
-#
-#     def handle_request(self, method):
-#         if method == 'GET':
-#             self.do_GET()
-#         elif method == 'POST':
-#             self.do_POST()
-#         elif method == 'PATCH':
-#             self.do_PATCH()
-#         else:
-#             self.send_response(400)
-#             self.send_header('Content-Type', 'application/json')
-#             self.end_headers()
-#             self.wfile.write(f"Валюта не найдена".encode('utf-8'))
-#
-#     def do_GET(self):
-#         self.send_response(200)
-#         self.send_header('Content-type', 'text/html')
-#         self.end_headers()
-#         self.wfile.write(b'Response from GET')
-#
-#     def do_POST(self):
-#         self.send_response(200)
-#         self.send_header('Content-type', 'text/html')
-#         self.end_headers()
-#         self.wfile.write(b'Response from POST')
-# #     #
-#     # def do_PATCH(self):
-#     #     self.send_response(200)
-#     #     self.send_header('Content-type', 'text/html')
-#     #     self.end_headers()
-#     #     self.wfile.write(b'Response from PATCH')
 
 
 class Server(BaseHTTPRequestHandler):
     @logger.catch
     def do_GET(self):
         parsed_url = urlparse(self.path)
-        # path = parsed_url.path.split('/')[-1] # вернет exchangeRates
-        path = parsed_url.path # вернет /exchangeRates
+        path = parsed_url.path.split('/')[1]
 
         if path in router.router.routes:
-            handler_class = router.router.routes[path]  #RatesController()
-            handler_instance = handler_class()
-            # if isinstance(handler_instance, RatesController):
-            handler_instance.do_GET(self)
-            # if isinstance(handler_instance, RateController):
-            #     code = parsed_url.path.split('/')[-1]
-            #     handler_instance.do_GET(self, code)
+            handler_class = router.router.routes[path]
+            if isinstance(handler_class(), (RatesController, CurrenciesController)):
+                handler_class.do_GET(self)
+            if isinstance(handler_class(), (RateController, CurrencyController)):
+                code = parsed_url.path.split('/')[-1]
+                handler_class.do_GET(self, code)
+            if isinstance(handler_class(), ServiceExchange):
+                query =  parsed_url.query
+                query_params = parse_qs(query)
+                from_currency = query_params['from'][0]
+                to_currency = query_params['to'][0]
+                amount = float(Decimal(query_params['amount'][0]))
+                handler_class.do_GET(self, from_currency, to_currency, amount)
+
+
         else:
             self.send_response(404)
             self.send_header('Content-type', 'text/html')

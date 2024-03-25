@@ -1,5 +1,3 @@
-'''Здесь обработчик запроса GET/exchangeRate/USDRUB'''
-import http
 import json
 import sqlite3
 import urllib.request
@@ -7,7 +5,7 @@ import dao.rates_DAO
 import env
 import dto
 from urllib.parse import urlencode
-from http.server import BaseHTTPRequestHandler, HTTPServer
+
 from loguru import logger
 
 
@@ -15,14 +13,12 @@ logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", 
 
 
 class RateController:
-    """Класс обработчик запроса обменного курса"""
+    """Класс обработчик запроса GET/exchangeRate/USDRUB"""
     @logger.catch
     def do_GET(self, code):
         """
         Метод получения конкретного обменного курса
         """
-        # parsed_url = urllib.parse.urlparse(self.path)
-        # code = parsed_url.path.split('/')[-1]
         if len(code) == 6:
             try:
                 response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
