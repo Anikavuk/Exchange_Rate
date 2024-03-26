@@ -13,37 +13,34 @@ logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", 
 
 
 class RateController:
-    """Класс обработчик запроса GET/exchangeRate/USDRUB"""
+    """Класс обработчик запроса GET/exchangeRate/USDRUB
+    PATCH http://localhost:8080/exchangeRate/EURRUB
+    """
     @logger.catch
     def do_GET(self, code):
         """
         Метод получения конкретного обменного курса
         """
         if len(code) == 6:
-            try:
-                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
-                logger.error(response)
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-                return
-            except IndexError:
-                self.send_response(404)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(f"Обменный курс для пары не найден".encode('utf-8'))
-                return
-            except sqlite3.DatabaseError as e:
-                self.send_response(500)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        else:
-            self.send_response(400)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(f"Код валюты пары отсутствует в адресе".encode('utf-8'))
+            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
+            logger.error(response)
+            return response
+        #     except IndexError:
+        #         self.send_response(404)
+        #         self.send_header('Content-Type', 'application/json')
+        #         self.end_headers()
+        #         self.wfile.write(f"Обменный курс для пары не найден".encode('utf-8'))
+        #         return
+        #     except sqlite3.DatabaseError as e:
+        #         self.send_response(500)
+        #         self.send_header('Content-Type', 'application/json')
+        #         self.end_headers()
+        #         self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+        # else:
+        #     self.send_response(400)
+        #     self.send_header('Content-Type', 'application/json')
+        #     self.end_headers()
+        #     self.wfile.write(f"Код валюты пары отсутствует в адресе".encode('utf-8'))
 
     def do_PATCH(self):
         parsed_url = urllib.parse.urlparse(self.path)

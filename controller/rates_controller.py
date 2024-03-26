@@ -1,45 +1,36 @@
-"""Здесь обработчик GET /exchangeRates
-                    POST /exchangeRates
-                    PATCH /exchangeRate/USDRUB"""
-
 import json
 import sqlite3
 import urllib.request
-import env
-import dao.rates_DAO
 from urllib.parse import parse_qs
 
 from loguru import logger
 
-
+import dao.rates_DAO
+import env
 
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
 
 class RatesController:
-    """Класс обработчик запроса http://localhost:8080/exchangeRates"""
+    """Класс - обработчик запроса
+    GET http://localhost:8080/exchangeRates
+    POST http://localhost:8080/exchangeRates"""
+
     @logger.catch
     def do_GET(self):
-
-        try:
-            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
-            logger.debug(response)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # self.wfile.write("Hello world".encode('utf-8'))
-            self.wfile.write(json.dumps(response).encode('utf-8'))
-            return
-        except sqlite3.DatabaseError as e:
-            self.send_response(500)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        except Exception:
-            self.send_response(400)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(f"Запрос не верен".encode('utf-8'))
+        response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
+        logger.debug(response)
+        return response
+        # except sqlite3.DatabaseError as e:
+        #     self.send_response(500)
+        #     self.send_header('Content-Type', 'application/json')
+        #     self.end_headers()
+        #     self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+        # except Exception:
+        #     self.send_response(400)
+        #     self.send_header('Content-Type', 'application/json')
+        #     self.end_headers()
+        #     self.wfile.write(f"Запрос не верен".encode('utf-8'))
 
     @logger.catch
     def do_POST(self):
@@ -56,17 +47,19 @@ class RatesController:
                 self.send_response(400)
                 self.send_header('Content-Type', "application/json")
                 self.end_headers()
-                self.wfile.write(f"The required form field is missing: baseCurrencyCode, targetCurrencyCode, rate".encode('utf-8'))
+                self.wfile.write(
+                    f"The required form field is missing: baseCurrencyCode, targetCurrencyCode, rate".encode('utf-8'))
                 return
 
-            save_rate = dao.rates_DAO.ExchangeDAO(env.path_to_database).save_rate(baseCurrency, targetCurrency,rate)
+            save_rate = dao.rates_DAO.ExchangeDAO(env.path_to_database).save_rate(baseCurrency, targetCurrency, rate)
             if save_rate is None:
                 self.send_response(409)
                 self.send_header('Content-Type', "application/json")
                 self.end_headers()
                 self.wfile.write(f"A currency pair with this code already exists".encode('utf-8'))
                 return
-            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(baseCurrency + targetCurrency)
+            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
+                baseCurrency + targetCurrency)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
@@ -76,7 +69,8 @@ class RatesController:
             self.send_response(404)
             self.send_header('Content-Type', 'text/plain')
             self.end_headers()
-            self.wfile.write(f'One (or both) currency from the currency pair does not exist in the database'.encode('utf-8'))
+            self.wfile.write(
+                f'One (or both) currency from the currency pair does not exist in the database'.encode('utf-8'))
 
         except sqlite3.DatabaseError as e:
             self.send_response(500)

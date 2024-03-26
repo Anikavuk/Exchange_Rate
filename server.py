@@ -1,3 +1,4 @@
+import json
 import urllib
 import urllib.parse
 from decimal import Decimal
@@ -25,18 +26,21 @@ class Server(BaseHTTPRequestHandler):
         if path in router.router.routes:
             handler_class = router.router.routes[path]
             if isinstance(handler_class(), (RatesController, CurrenciesController)):
-                handler_class.do_GET(self)
+                response = handler_class.do_GET(self)
             if isinstance(handler_class(), (RateController, CurrencyController)):
                 code = parsed_url.path.split('/')[-1]
-                handler_class.do_GET(self, code)
+                response = handler_class.do_GET(self, code)
             if isinstance(handler_class(), ServiceExchange):
                 query =  parsed_url.query
                 query_params = parse_qs(query)
                 from_currency = query_params['from'][0]
                 to_currency = query_params['to'][0]
                 amount = float(Decimal(query_params['amount'][0]))
-                handler_class.do_GET(self, from_currency, to_currency, amount)
-
+                response = handler_class.do_GET(self, from_currency, to_currency, amount)
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(response).encode('utf-8'))
 
         else:
             self.send_response(404)

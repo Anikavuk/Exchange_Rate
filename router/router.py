@@ -4,7 +4,7 @@ from controller.rate_controller import RateController
 from controller.rates_controller import RatesController
 from service.service import ServiceExchange
 
-# Словарь с соответствием URL-адресов и классов обработчиков
+# Словарь соответствия URL-адреса и класса - обработчика
 
 routes = {'currency': CurrencyController,
           'currencies': CurrenciesController,
