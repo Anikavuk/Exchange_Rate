@@ -32,16 +32,12 @@ class ServiceExchange:
 
     def do_GET(self, from_currency, to_currency, amount):
         rate = ServiceExchange.find_rate(from_currency, to_currency)
-        data = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
+        response = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
                                           CurrencyDAO(env.path_to_database).find_by_code(to_currency).__dict__,
                                           round(rate, 6),
                                           amount,
-                                          round(float(rate * amount), 6))
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(data.to_dict()).encode('utf-8'))
-        return
+                                          round(float(rate * amount), 6)).to_dict()
+        return response
 
 
 
