@@ -1,13 +1,13 @@
 import dao.rates_DAO
 import dto.service_DTO
 import env
-import json
 
+from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
 
 
 
-class ServiceExchange:
+class ServiceExchange(BaseController):
     """Класс обработчик запроса GET http://localhost:8080/exchange?from=EUR&to=RUB&amount=10"""
     @staticmethod
     def find_rate(from_currency, to_currency):

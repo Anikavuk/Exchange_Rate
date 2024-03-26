@@ -8,11 +8,12 @@ from urllib.parse import urlencode
 
 from loguru import logger
 
+from controller.base_controller import BaseController
 
 logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
-class RateController:
+class RateController(BaseController):
     """Класс обработчик запроса GET/exchangeRate/USDRUB
     PATCH http://localhost:8080/exchangeRate/EURRUB
     """

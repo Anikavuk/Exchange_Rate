@@ -6,11 +6,12 @@ import env
 import dto.currencies_DTO
 from loguru import logger
 
+from controller.base_controller import BaseController
 
 logger.add('my_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
-class CurrencyController:
+class CurrencyController(BaseController):
     """Класс обработчик запроса http://localhost:8080/currency/USD"""
     @logger.catch
     def do_GET(self, code):

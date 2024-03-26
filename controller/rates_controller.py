@@ -7,11 +7,12 @@ from loguru import logger
 
 import dao.rates_DAO
 import env
+from controller.base_controller import BaseController
 
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
 
-class RatesController:
+class RatesController(BaseController):
     """Класс - обработчик запроса
     GET http://localhost:8080/exchangeRates
     POST http://localhost:8080/exchangeRates"""
