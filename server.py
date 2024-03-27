@@ -18,6 +18,12 @@ logger.add('server.log', format="{time} {level} {message}", level="DEBUG", seria
 
 
 class Server(BaseHTTPRequestHandler):
+
+    def handle_error(self, status_code, message):
+        self.send_response(status_code)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(message.encode('utf-8'))
     @logger.catch
     def do_GET(self):
         parsed_url = urlparse(self.path)
