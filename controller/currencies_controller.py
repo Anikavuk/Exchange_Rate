@@ -22,7 +22,9 @@ class CurrenciesController(BaseController):
     def do_GET(self):
         response = CurrencyDAO(env.path_to_database).all_currencies()
         logger.debug(response)
+        raise sqlite3.DatabaseError or ra
         return response
+
         # except sqlite3.DatabaseError as e:
         #     self.send_response(500)
         #     self.send_header('Content-Type', 'application/json')

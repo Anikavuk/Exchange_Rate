@@ -1,5 +1,6 @@
 import sqlite3
 from abc import ABC, abstractmethod
+from http.client import HTTPException
 
 
 class BaseController(ABC):
@@ -15,23 +16,21 @@ class BaseController(ABC):
         pass
 
     def error_response(self, exception: Exception):
-
-        try:
             if isinstance(exception, sqlite3.DatabaseError):
-                error_message = f'возникла ошибка при работе с базой данных {exception}'
-                self.send(500, {'error': error_message})
-            if isinstance(exception, (ValueError, TypeError)):
-                error_message = f'Такой валюты нет в базе'
-                self.send(404, {'error': error_message})
+                error_code = 500
+                error_message = f'The database is unavailable'
             if isinstance(exception, HTTPException):
-                error_message = f'Некорректный запрос'
-                self.send(400, {'error': error_message})
-            if isinstance(exception, (IndexError, AttributeError)):
-                error_message = f'Не хватает данных для выполнения'
-                self.send(400, {'error': error_message})
-            if isinstance(exception, MyError):
-                error_message = f'Валютная пара с таким кодом уже существует'
-                self.send(409, {'error': error_message})
-        except Exception as error:
-            error_message = f'Возникла ошибка {error}'
-            self.send(400, {'error': error_message})
+                error_code = 400
+                error_message = f'Код валюты отсутствует в адресе'
+            if isinstance(exception, IndexError):
+                error_code = 404
+                error_message = f'Валюта не найдена'
+            # if isinstance(exception, (ValueError, TypeError)):
+            #     error_message = f'Такой валюты нет в базе'
+            #     self.send(404, {'error': error_message})
+            # if isinstance(exception, MyError):
+            #     error_message = f'Валютная пара с таким кодом уже существует'
+            #     self.send(409, {'error': error_message})
+        # except Exception as error:
+        #     error_message = f'Возникла ошибка {error}'
+        #     self.send(400, {'error': error_message})

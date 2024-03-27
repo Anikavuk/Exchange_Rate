@@ -22,10 +22,11 @@ class Server(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_url = urlparse(self.path)
         path = parsed_url.path.split('/')[1]
-
         if path in router.router.routes:
             handler_class = router.router.routes[path]
-            if isinstance(handler_class(), (RatesController, CurrenciesController)):
+            if isinstance(handler_class(), RatesController):
+                response = handler_class.do_GET(self)
+            if isinstance(handler_class(), CurrenciesController):
                 response = handler_class.do_GET(self)
             if isinstance(handler_class(), (RateController, CurrencyController)):
                 code = parsed_url.path.split('/')[-1]
@@ -41,7 +42,6 @@ class Server(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
-
         else:
             self.send_response(404)
             self.send_header('Content-type', 'text/html')
