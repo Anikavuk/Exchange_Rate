@@ -16,16 +16,18 @@ class BaseController(ABC):
         pass
 
     def error_response(self, exception: Exception):
-            if isinstance(exception, sqlite3.DatabaseError):
-                error_code = 500
-                error_message = f"The database is unavailable"
-            if isinstance(exception, HTTPException):
-                error_code = 400
-                error_message = f"Код валюты отсутствует в адресе"
-            if isinstance(exception, IndexError):
-                error_code = 404
-                error_message = f"Валюта не найдена"
-            return {error_code : error_message}
+        error_code = 200
+        error_message = "OK"
+        if isinstance(exception, sqlite3.DatabaseError):
+            error_code = 500
+            error_message = f"The database is unavailable"
+        if isinstance(exception, HTTPException):
+            error_code = 400
+            error_message = f"Код валюты отсутствует в адресе"
+        if isinstance(exception, IndexError):
+            error_code = 404
+            error_message = f"Валюта не найдена"
+        return {error_code : error_message}
             # if isinstance(exception, (ValueError, TypeError)):
             #     error_message = f'Такой валюты нет в базе'
             #     self.send(404, {'error': error_message})

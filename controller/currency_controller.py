@@ -24,16 +24,20 @@ class CurrencyController(BaseController):
                 data = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code)
                 response = dto.currencies_DTO.CurrencyDTO(data.id, data.full_name, data.code, data.sign).to_dict()
                 logger.error(data)
-            if not code:
-                response = self.error_response(HTTPException)
+                if not code:
+                    self.error_response(HTTPException)
+                return response
         except IndexError:
-            response = self.error_response(IndexError)
+            self.error_response(IndexError)
         except sqlite3.DatabaseError:
-            response = self.error_response(sqlite3.DatabaseError)
-        return response
+            self.error_response(sqlite3.DatabaseError)
 
 
 
+a = CurrencyController()
+print(a.do_GET('USD'))
+# print(a.do_GET())
+print(a.do_GET('UUU'))
 
         #     self.send_response(404)
         #     self.send_header('Content-Type', 'application/json')
