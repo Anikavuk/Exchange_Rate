@@ -9,7 +9,7 @@ from loguru import logger
 
 from controller.base_controller import BaseController
 
-logger.add('my_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
+logger.add('errors_Currency.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
 class CurrencyController(BaseController):
@@ -24,20 +24,22 @@ class CurrencyController(BaseController):
                 data = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code)
                 response = dto.currencies_DTO.CurrencyDTO(data.id, data.full_name, data.code, data.sign).to_dict()
                 logger.error(data)
-                if not code:
-                    self.error_response(HTTPException)
                 return response
+            else:
+                return self.error_response(HTTPException())
         except IndexError:
-            self.error_response(IndexError)
+            return self.error_response(IndexError())
         except sqlite3.DatabaseError:
-            self.error_response(sqlite3.DatabaseError)
+            return self.error_response(sqlite3.DatabaseError())
+
 
 
 
 a = CurrencyController()
-print(a.do_GET('USD'))
-# print(a.do_GET())
 print(a.do_GET('UUU'))
+print(a.do_GET('USD')) #этот работает
+print(a.do_GET(""))
+# print(a.do_GET('UUU'))
 
         #     self.send_response(404)
         #     self.send_header('Content-Type', 'application/json')
