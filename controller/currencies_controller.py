@@ -10,7 +10,7 @@ from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
 from loguru import logger
 
-
+from error_response import ErrorResponse
 
 logger.add('errors.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -20,21 +20,12 @@ class CurrenciesController(BaseController):
     POST http://localhost:8080/currencies"""
     @logger.catch
     def do_GET(self):
-        response = CurrencyDAO(env.path_to_database).all_currencies()
-        logger.debug(response)
-        raise sqlite3.DatabaseError or ra
-        return response
-
-        # except sqlite3.DatabaseError as e:
-        #     self.send_response(500)
-        #     self.send_header('Content-Type', 'application/json')
-        #     self.end_headers()
-        #     self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        # if not code:
-        #     self.send_response(400)
-        #     self.send_header('Content-Type', 'application/json')
-        #     self.end_headers()
-        #     self.wfile.write(f"Код валюты {code} отсутствует в адресе".encode('utf-8'))
+        try:
+            response = CurrencyDAO(env.path_to_database).all_currencies()
+            logger.debug(response)
+            return response
+        except sqlite3.DatabaseError:
+            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 
     # @logger.catch
     # def do_POST(self):
