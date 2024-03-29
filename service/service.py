@@ -1,10 +1,13 @@
+import sqlite3
+from http.client import HTTPException
+
 import dao.rates_DAO
 import dto.service_DTO
 import env
 
 from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
-
+from error_response import ErrorResponse
 
 
 class ServiceExchange(BaseController):
@@ -31,13 +34,18 @@ class ServiceExchange(BaseController):
 
 
     def do_GET(self, from_currency, to_currency, amount):
-        rate = ServiceExchange.find_rate(from_currency, to_currency)
-        response = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
-                                          CurrencyDAO(env.path_to_database).find_by_code(to_currency).__dict__,
-                                          round(rate, 6),
-                                          amount,
-                                          round(float(rate * amount), 6)).to_dict()
-        return response
-
-
+        try:
+            rate = ServiceExchange.find_rate(from_currency, to_currency)
+            response = dto.service_DTO.ServiceDTO(CurrencyDAO(env.path_to_database).find_by_code(from_currency).__dict__,
+                                              CurrencyDAO(env.path_to_database).find_by_code(to_currency).__dict__,
+                                              round(rate, 6),
+                                              amount,
+                                              round(float(rate * amount), 6)).to_dict()
+            return response
+        except HTTPException:
+            return ErrorResponse.error_response(exception=HTTPException())
+        except IndexError:
+            return ErrorResponse.error_response(exception=IndexError())
+        except sqlite3.DatabaseError:
+            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 

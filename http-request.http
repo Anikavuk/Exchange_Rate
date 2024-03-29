@@ -1,4 +1,4 @@
-GET http://localhost:8080/exchange?D&to=BDT&amount=10
+GET http://localhost:8080/exchange?from=&to=BDT&amount=0
 
 ###
 GET http://localhost:8080/exchange?from=AUD&to=BDT&amount=10
