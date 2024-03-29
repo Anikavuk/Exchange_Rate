@@ -19,6 +19,9 @@ class ErrorResponse:
         if isinstance(exception, IndexError):
             error_code = 404
             error_message = f"Обменный курс для пары не найден"
+        if isinstance(exception, HTTPException):
+            error_code = 400
+            error_message = f"Запрос не верен"
         return {error_code : error_message}
 
 # print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))

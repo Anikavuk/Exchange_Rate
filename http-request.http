@@ -23,7 +23,11 @@ Content-Type: application/x-www-form-urlencoded
 baseCurrencyCode=ttt&targetCurrencyCode=GGG&rate=100000
 
 ###
-GET http://localhost:8080/exchangeRa
+GET http://localhost:8080/exchangeRates
+Accept: application/json
+
+###
+GET http://localhost:8080/exchangeRate
 Accept: application/json
 
 ###

@@ -8,6 +8,7 @@ from loguru import logger
 import dao.rates_DAO
 import env
 from controller.base_controller import BaseController
+from error_response import ErrorResponse
 
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -19,19 +20,14 @@ class RatesController(BaseController):
 
     @logger.catch
     def do_GET(self):
-        response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
-        logger.debug(response)
-        return response
-        # except sqlite3.DatabaseError as e:
-        #     self.send_response(500)
-        #     self.send_header('Content-Type', 'application/json')
-        #     self.end_headers()
-        #     self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        # except Exception:
-        #     self.send_response(400)
-        #     self.send_header('Content-Type', 'application/json')
-        #     self.end_headers()
-        #     self.wfile.write(f"Запрос не верен".encode('utf-8'))
+        try:
+            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).all_exchange_rates()
+            logger.debug(response)
+            return response
+        except IndexError:
+            return ErrorResponse.error_response(exception=IndexError())
+        except sqlite3.DatabaseError:
+            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 
     @logger.catch
     def do_POST(self):
