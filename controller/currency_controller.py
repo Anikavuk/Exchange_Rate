@@ -33,23 +33,3 @@ class CurrencyController(BaseController):
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 
-
-# a = CurrencyController()
-# print(len(a.do_GET('UUU')))
-# print(a.do_GET('USD')) #этот работает
-# print(a.do_GET(""))
-
-
-
-
-
-#     self.send_response(404)
-#     self.send_header('Content-Type', 'application/json')
-#     self.end_headers()
-#     self.wfile.write(f"Валюта не найдена: {code}".encode('utf-8'))
-#     return
-# except sqlite3.DatabaseError as e:
-#     self.send_response(500)
-#     self.send_header('Content-Type', 'application/json')
-#     self.end_headers()
-#     self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))

@@ -103,7 +103,7 @@ Accept: application/json
 <> 2024-02-07T225623.200.json
 
 ###
-GET http://localhost:8080/currency/ЙЙЙ
+GET http://localhost:8080/currency/FFF
 Accept: application/json
 
 <> 2024-02-08T151412.200.json
