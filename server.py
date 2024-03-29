@@ -19,20 +19,13 @@ logger.add('server.log', format="{time} {level} {message}", level="DEBUG", seria
 
 class Server(BaseHTTPRequestHandler):
 
-    def handle_error(self, status_code, message):
-        self.send_response(status_code)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        self.wfile.write(message.encode('utf-8'))
     @logger.catch
     def do_GET(self):
         parsed_url = urlparse(self.path)
         path = parsed_url.path.split('/')[1]
         if path in router.router.routes:
             handler_class = router.router.routes[path]
-            if isinstance(handler_class(), RatesController):
-                response = handler_class.do_GET(self)
-            if isinstance(handler_class(), CurrenciesController):
+            if isinstance(handler_class(), (RatesController, CurrenciesController)):
                 response = handler_class.do_GET(self)
             if isinstance(handler_class(), (RateController, CurrencyController)):
                 code = parsed_url.path.split('/')[-1]
