@@ -18,7 +18,7 @@ class ErrorResponse:
             error_message = f"Валюта не найдена"
         return {error_code : error_message}
 
-print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))
+# print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))
             # if isinstance(exception, (ValueError, TypeError)):
             #     error_message = f'Такой валюты нет в базе'
             #     self.send(404, {'error': error_message})

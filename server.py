@@ -19,6 +19,14 @@ logger.add('server.log', format="{time} {level} {message}", level="DEBUG", seria
 
 class Server(BaseHTTPRequestHandler):
 
+    def send_error_response(self, error_response):
+        error_code = list(error_response.keys())[0]
+        error_message = error_response[error_code]
+        self.send_response(error_code)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(error_message.encode())
+
     @logger.catch
     def do_GET(self):
         parsed_url = urlparse(self.path)
@@ -40,7 +48,10 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps(response).encode('utf-8'))
+            if len(response) == 1:
+                self.send_response(response)
+            else:
+                self.wfile.write(json.dumps(response).encode('utf-8'))
         else:
             self.send_response(404)
             self.send_header('Content-type', 'text/html')
@@ -75,3 +86,6 @@ class Server(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(b'Not Found')
+
+# a = Server()
+# a

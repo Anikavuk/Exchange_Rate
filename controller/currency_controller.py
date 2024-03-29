@@ -34,10 +34,10 @@ class CurrencyController(BaseController):
             return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 
 
-a = CurrencyController()
-print(a.do_GET('UUU'))
+# a = CurrencyController()
+# print(len(a.do_GET('UUU')))
 # print(a.do_GET('USD')) #этот работает
-print(a.do_GET(""))
+# print(a.do_GET(""))
 
 
 
