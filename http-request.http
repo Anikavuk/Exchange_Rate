@@ -27,12 +27,12 @@ GET http://localhost:8080/exchangeRa
 Accept: application/json
 
 ###
-GET http://localhost:8080/exchangeRates
+GET http://localhost:8080/exchangeRate
 Accept: application/json
 
 
 ###
-GET http://localhost:8080/exchangeRate/EUR
+GET http://localhost:8080/exchangeRate/EURWWW
 Accept: application/json
 
 ###

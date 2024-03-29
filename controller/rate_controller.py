@@ -1,6 +1,8 @@
 import json
 import sqlite3
 import urllib.request
+from http.client import HTTPException
+
 import dao.rates_DAO
 import env
 
@@ -9,6 +11,7 @@ from urllib.parse import urlencode
 from loguru import logger
 
 from controller.base_controller import BaseController
+from error_response import ErrorResponse
 
 logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
@@ -22,26 +25,17 @@ class RateController(BaseController):
         """
         Метод получения конкретного обменного курса
         """
-        if len(code) == 6:
-            response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
-            logger.error(response)
-            return response
-        #     except IndexError:
-        #         self.send_response(404)
-        #         self.send_header('Content-Type', 'application/json')
-        #         self.end_headers()
-        #         self.wfile.write(f"Обменный курс для пары не найден".encode('utf-8'))
-        #         return
-        #     except sqlite3.DatabaseError as e:
-        #         self.send_response(500)
-        #         self.send_header('Content-Type', 'application/json')
-        #         self.end_headers()
-        #         self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-        # else:
-        #     self.send_response(400)
-        #     self.send_header('Content-Type', 'application/json')
-        #     self.end_headers()
-        #     self.wfile.write(f"Код валюты пары отсутствует в адресе".encode('utf-8'))
+        try:
+            if len(code) == 6:
+                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
+                logger.error(response)
+                return response
+            else:
+                return ErrorResponse.error_response(exception=HTTPException())
+        except IndexError:
+            return ErrorResponse.error_response(exception=IndexError())
+        except sqlite3.DatabaseError:
+            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
 
     def do_PATCH(self):
         parsed_url = urllib.parse.urlparse(self.path)

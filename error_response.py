@@ -16,6 +16,9 @@ class ErrorResponse:
         if isinstance(exception, IndexError):
             error_code = 404
             error_message = f"Валюта не найдена"
+        if isinstance(exception, IndexError):
+            error_code = 404
+            error_message = f"Обменный курс для пары не найден"
         return {error_code : error_message}
 
 # print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))
