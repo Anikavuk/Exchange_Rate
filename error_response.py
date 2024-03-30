@@ -19,7 +19,7 @@ class ErrorResponse:
         if isinstance(exception, HTTPException):
             if exception.missing_fields == ['name', 'code', 'sign']:
                 error_code = 400
-                error_message = "The required form field is missing: name, code, sign"
+                error_message = "Отсутствует обязательное поле формы: name, code, sign"
             elif exception.currency_not_found:
                 error_code = 404
                 error_message = "Валюта не найдена"
@@ -31,7 +31,7 @@ class ErrorResponse:
                 error_message = "Запрос не верен"
         if isinstance(exception, sqlite3.IntegrityError):
             error_code = 409
-            error_message = f"A currency with this code already exists"
+            error_message = f"Валюта с этим кодом уже существует"
         return {error_code : error_message}
 
 

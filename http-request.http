@@ -59,7 +59,7 @@ name=Грзин&code=ГРУ
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
-name=POP&code=PPP&sign=p
+name=EEE&code=ккк
 
 ###
 

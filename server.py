@@ -65,12 +65,15 @@ class Server(BaseHTTPRequestHandler):
         if self.path == '/currencies':
             currencies_obj = CurrenciesController()
             response = currencies_obj.do_POST(post_data_dict)
+
+
         if len(response) == 1:
             self.send_error_response(response)
-        self.send_response(201)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(response).encode('utf-8'))
+        else:
+            self.send_response(201)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(response).encode('utf-8'))
 
     def do_PATCH(self):
         parsed_url = urllib.urlparse(self.path)
