@@ -47,7 +47,7 @@ Accept: application/json
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
-name=ГРУЗИНы&code=ГРУЗИЯt&sign=ГРУЗИН
+name=RRR&code=WWWt&sign=%
 
 ###
 POST http://localhost:8080/currencies

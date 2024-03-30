@@ -2,8 +2,8 @@ import json
 import urllib
 import urllib.parse
 from decimal import Decimal
-from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler
+from urllib.parse import urlparse, parse_qs
 
 from loguru import logger
 
@@ -39,7 +39,7 @@ class Server(BaseHTTPRequestHandler):
                 code = parsed_url.path.split('/')[-1]
                 response = handler_class.do_GET(self, code)
             if isinstance(handler_class(), ServiceExchange):
-                query =  parsed_url.query
+                query = parsed_url.query
                 query_params = parse_qs(query)
                 from_currency = query_params['from'][0]
                 to_currency = query_params['to'][0]
@@ -55,19 +55,22 @@ class Server(BaseHTTPRequestHandler):
 
     @logger.catch
     def do_POST(self):
-        parsed_url = urlparse(self.path)
-        path = parsed_url.path
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('utf-8')
+        post_data_dict = dict(urllib.parse.parse_qsl(post_data))
 
-        if path in router.router.routes:
-            handler_class = router.router.routes[path]  # RatesController()
-            handler_instance = handler_class()
-            handler_class.do_POST(self)
-
-        else:
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write(b'Not Found')
+        if self.path == '/exchangeRates':
+            rates_obj = CurrenciesController()
+            response = rates_obj.do_POST(post_data_dict)
+        if self.path == '/currencies':
+            currencies_obj = CurrenciesController()
+            response = currencies_obj.do_POST(post_data_dict)
+        if len(response) == 1:
+            self.send_error_response(response)
+        self.send_response(201)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(response).encode('utf-8'))
 
     def do_PATCH(self):
         parsed_url = urllib.urlparse(self.path)

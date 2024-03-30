@@ -10,9 +10,6 @@ class ErrorResponse:
         if isinstance(exception, sqlite3.DatabaseError):
             error_code = 500
             error_message = f"The database is unavailable"
-        if isinstance(exception, HTTPException):
-            error_code = 400
-            error_message = f"Код валюты отсутствует в адресе"
         if isinstance(exception, IndexError):
             error_code = 404
             error_message = f"Валюта не найдена"
@@ -20,9 +17,26 @@ class ErrorResponse:
             error_code = 404
             error_message = f"Обменный курс для пары не найден"
         if isinstance(exception, HTTPException):
-            error_code = 400
-            error_message = f"Запрос не верен"
+            if exception.missing_fields == ['name', 'code', 'sign']:
+                error_code = 400
+                error_message = "The required form field is missing: name, code, sign"
+            elif exception.currency_not_found:
+                error_code = 404
+                error_message = "Валюта не найдена"
+            elif exception.exchange_rate_not_found:
+                error_code = 404
+                error_message = "Обменный курс для пары не найден"
+            else:
+                error_code = 400
+                error_message = "Запрос не верен"
+        if isinstance(exception, sqlite3.IntegrityError):
+            error_code = 409
+            error_message = f"A currency with this code already exists"
         return {error_code : error_message}
+
+
+
+
 
 # print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))
             # if isinstance(exception, (ValueError, TypeError)):
