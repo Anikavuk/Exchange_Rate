@@ -1,5 +1,59 @@
 import sqlite3
 from http.client import HTTPException
+from werkzeug.exceptions import HTTPException
+
+
+class DatabaseErrorException(Exception):
+    def __init__(self, message="База данных недоступна"):
+        self.message = message
+        super().__init__(self.message)
+
+class CurrencyNotFoundException(Exception):
+    def __init__(self, message="Валюта не найдена"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class ExchangeRateNotFoundException(Exception):
+    def __init__(self, message="Обменный курс для пары не найден"):
+        self.message = message
+        super().__init__(self.message)
+
+class MissingFieldsException(HTTPException):  # Исключение отсутствующего поля
+    def __init__(self, fields):
+        super().__init__('Данные отсутствуют в адресе:', fields)
+        self.fields = fields
+
+class CurrencyAlreadyExistsException(Exception): # Валюта уже существует
+    def __init__(self, message="Валюта уже существует"):
+        self.message = message
+        super().__init__(self.message)
+
+class ErrorResponse:
+    @classmethod
+    def error_response(cls, exception: Exception):
+        error_code = 200
+        error_message = "OK"
+        if isinstance(exception, DatabaseErrorException):
+            error_code = 500
+            error_message = "The database is unavailable"
+        elif isinstance(exception, CurrencyNotFoundException):
+            error_code = 404
+            error_message = "Валюта не найдена"
+        elif isinstance(exception, ExchangeRateNotFoundException):
+            error_code = 404
+            error_message = "Обменный курс для пары не найден"
+        elif isinstance(exception, MissingFieldsException):
+            if exception.fields == ['name', 'code', 'sign']:
+                error_code = 400
+                error_message = "The required form field is missing: name, code, sign"
+            else:
+                error_code = 400
+                error_message = "Запрос не верен"
+        elif isinstance(exception, sqlite3.IntegrityError):
+            error_code = 409
+            error_message = "A currency with this code already exists"
+        return {error_code: error_message}
 
 
 class ErrorResponse:
