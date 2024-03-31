@@ -27,6 +27,8 @@ class RateController(BaseController):
             if len(code) == 6:
                 response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
                 logger.error(response)
+                if not response:
+                    raise IndexError
                 return response
             else:
                 raise MissingFieldsException('rate')
@@ -77,6 +79,6 @@ class RateController(BaseController):
 
 
 a = RateController()
-print(a.do_GET('USDRUB'))
+
 print(a.do_GET(''))
 print(a.do_GET('RUBAUD'))
