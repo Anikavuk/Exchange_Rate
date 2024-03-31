@@ -6,7 +6,7 @@ import dao.currencies_DAO
 import dto.currencies_DTO
 import env
 from controller.base_controller import BaseController
-from error_response import ErrorResponse, CurrencyAlreadyExistsException, DatabaseErrorException, \
+from error_response import ErrorResponse, DatabaseErrorException, \
     MissingFieldsException, CurrencyNotFoundException
 
 logger.add('errors_Currency.log', format="{time} {level} {message}", level="ERROR", serialize=True)
@@ -23,7 +23,6 @@ class CurrencyController(BaseController):
         try:
             if code is None or len(code) != 3:
                 raise MissingFieldsException('code')
-            # if len(code) == 3:
             data = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code)
             response = dto.currencies_DTO.CurrencyDTO(data.id, data.full_name, data.code, data.sign).to_dict()
             logger.error(data)
@@ -34,4 +33,3 @@ class CurrencyController(BaseController):
             return ErrorResponse.error_response(exception=CurrencyNotFoundException())
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=DatabaseErrorException())
-

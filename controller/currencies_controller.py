@@ -12,7 +12,7 @@ from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
 from loguru import logger
 
-from error_response import ErrorResponse
+from error_response import ErrorResponse, DatabaseErrorException, MissingFieldsException, CurrencyAlreadyExistsException
 
 logger.add('errors.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -27,7 +27,7 @@ class CurrenciesController(BaseController):
             logger.debug(response)
             return response
         except sqlite3.DatabaseError:
-            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
+            return ErrorResponse.error_response(exception=DatabaseErrorException())
 
     @logger.catch
     def do_POST(self, post_data_dict):
@@ -35,20 +35,16 @@ class CurrenciesController(BaseController):
             full_name = post_data_dict.get("name")
             code = post_data_dict.get("code")
             sign = post_data_dict.get("sign")
-        # if full_name is None or code is None or sign is None:
-        #     self.send_response(400)
-        #     self.send_header('Content-Type', "application/json")
-        #     self.end_headers()
-        #     self.wfile.write(f"The required form field is missing: name, code, sign".encode('utf-8'))
-        #     return
+            if full_name is None or code is None or sign is None:
+                raise MissingFieldsException('full_name, code, sign')
 
             save_response = dao.currencies_DAO.CurrencyDAO(env.path_to_database).save_currency(code, full_name,sign)
             response = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code)
             data = dto.currencies_DTO.CurrencyDTO(response.id, response.full_name, response.code, response.sign).to_dict()
             return data
-        except HTTPException:
-            return ErrorResponse.error_response(exception=HTTPException())
+        except MissingFieldsException:
+            return ErrorResponse.error_response(exception=MissingFieldsException('full_name, code, sign'))
         except sqlite3.IntegrityError:
-            return ErrorResponse.error_response(exception=sqlite3.IntegrityError())
+            return ErrorResponse.error_response(exception=CurrencyAlreadyExistsException('code'))
         except sqlite3.DatabaseError:
-            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
+            return ErrorResponse.error_response(exception=DatabaseErrorException())

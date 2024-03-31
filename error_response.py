@@ -14,13 +14,15 @@ class CurrencyNotFoundException(Exception):
 
 
 class ExchangeRateNotFoundException(Exception):
-    def __init__(self, message="Обменный курс для пары не найден"):  # либо Валютная пара отсутствует в базе данных
+    def __init__(self, value, message=None):
+        self.value = value
         self.message = message
         super().__init__(self.message)
 
 
-class CurrencyAlreadyExistsException(Exception):
-    def __init__(self, message="Валюта уже существует"):  # Валютная пара с таким кодом уже существует
+class CurrencyAlreadyExistsException(Exception): #Валюта уже существует, исключение
+    def __init__(self, value, message=None):  # Валютная пара с таким кодом уже существует
+        self.value = value
         self.message = message
         super().__init__(self.message)
 
@@ -43,22 +45,33 @@ class ErrorResponse:
         elif isinstance(exception, CurrencyNotFoundException):
             error_code = 404
             error_message = "Валюта не найдена"
-        elif isinstance(exception, ExchangeRateNotFoundException):
+        elif isinstance(exception, IndexError):
             error_code = 404
             error_message = "Обменный курс для пары не найден"
-        # elif isinstance(exception, MissingFieldsException):
-        #     error_code = 400
-        #     error_message = 'Данные отсутствуют в адресе:'
+        # elif isinstance(exception, ExchangeRateNotFoundException):
+        #     if exception.value == 'get_rate':
+        #         error_code = 404
+        #         error_message = "Обменный курс для пары не найден"
+        #     elif exception.value == 'patch_rate':
+        #         error_code = 404
+        #         error_message = "Валютная пара отсутствует в базе данных"
         elif isinstance(exception, CurrencyAlreadyExistsException):
-            error_code = 409
-            error_message = "Валюта уже существует"
+            if exception.value == 'code':
+                error_code = 409
+                error_message = "Валюта с таким кодом уже существует"
+            else:
+                error_code = 409
+                error_message = "Валютная пара с таким кодом уже существует"
         elif isinstance(exception, MissingFieldsException):
             if exception.field == 'code':
-                    error_code = 400
-                    error_message = "Код валюты отсутствует в адресе"
-            else:
                 error_code = 400
-                error_message = "Запрос не верен"
+                error_message = "Код валюты отсутствует в адресе"
+            elif exception.field == 'full_name, code, sign':
+                error_code = 400
+                error_message = "Отсутствует нужное поле формы"
+            elif exception.field == 'rate':
+                error_code = 400
+                error_message = "Коды валютной пары отсутствуют в адресе"
         return {error_code: error_message}
 
         # elif isinstance(exception, MissingFieldsException):

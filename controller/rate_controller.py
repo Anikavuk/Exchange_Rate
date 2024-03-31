@@ -1,17 +1,14 @@
 import json
 import sqlite3
 import urllib.request
-from http.client import HTTPException
-
-import dao.rates_DAO
-import env
-
 from urllib.parse import urlencode
 
 from loguru import logger
 
+import dao.rates_DAO
+import env
 from controller.base_controller import BaseController
-from error_response import ErrorResponse
+from error_response import ErrorResponse, MissingFieldsException, ExchangeRateNotFoundException, DatabaseErrorException
 
 logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
 
@@ -20,6 +17,7 @@ class RateController(BaseController):
     """Класс обработчик запроса GET/exchangeRate/USDRUB
     PATCH http://localhost:8080/exchangeRate/EURRUB
     """
+
     @logger.catch
     def do_GET(self, code):
         """
@@ -31,11 +29,13 @@ class RateController(BaseController):
                 logger.error(response)
                 return response
             else:
-                return ErrorResponse.error_response(exception=HTTPException())
+                raise MissingFieldsException('rate')
+        except MissingFieldsException:
+            return ErrorResponse.error_response(exception=MissingFieldsException('rate'))
         except IndexError:
             return ErrorResponse.error_response(exception=IndexError())
         except sqlite3.DatabaseError:
-            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
+            return ErrorResponse.error_response(exception=DatabaseErrorException())
 
     def do_PATCH(self):
         parsed_url = urllib.parse.urlparse(self.path)
@@ -74,3 +74,9 @@ class RateController(BaseController):
                 self.send_header('Content-Type', 'text/plain')
                 self.end_headers()
                 self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+
+
+a = RateController()
+print(a.do_GET('USDRUB'))
+print(a.do_GET(''))
+print(a.do_GET('RUBAUD'))
