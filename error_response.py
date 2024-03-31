@@ -1,5 +1,3 @@
-import sqlite3
-
 from werkzeug.exceptions import HTTPException
 
 
@@ -21,16 +19,16 @@ class ExchangeRateNotFoundException(Exception):
         super().__init__(self.message)
 
 
-class MissingFieldsException(HTTPException):  # Исключение отсутствующего поля
-    def __init__(self, fields, message):
-        # super().__init__(fields)
-        self.fields = fields
-        self.message = 'Данные отсутствуют в адресе:'  # либо Код валютной пары отсутствует в адресе или Код валюты отсутствует в адресе
-
-
 class CurrencyAlreadyExistsException(Exception):
     def __init__(self, message="Валюта уже существует"):  # Валютная пара с таким кодом уже существует
         self.message = message
+        super().__init__(self.message)
+
+
+class MissingFieldsException(HTTPException):  # Исключение отсутствующего поля
+    def __init__(self, field, message=None):
+        self.field = field
+        self.message = message  # либо Код валютной пары отсутствует в адресе или Код валюты отсутствует в адресе
         super().__init__(self.message)
 
 
@@ -48,12 +46,19 @@ class ErrorResponse:
         elif isinstance(exception, ExchangeRateNotFoundException):
             error_code = 404
             error_message = "Обменный курс для пары не найден"
-        elif isinstance(exception, MissingFieldsException):
-            error_code = 400
-            error_message = 'Данные отсутствуют в адресе:'
-        elif isinstance(exception, sqlite3.IntegrityError):
+        # elif isinstance(exception, MissingFieldsException):
+        #     error_code = 400
+        #     error_message = 'Данные отсутствуют в адресе:'
+        elif isinstance(exception, CurrencyAlreadyExistsException):
             error_code = 409
-            error_message = "A currency with this code already exists"
+            error_message = "Валюта уже существует"
+        elif isinstance(exception, MissingFieldsException):
+            if exception.field == 'code':
+                    error_code = 400
+                    error_message = "Код валюты отсутствует в адресе"
+            else:
+                error_code = 400
+                error_message = "Запрос не верен"
         return {error_code: error_message}
 
         # elif isinstance(exception, MissingFieldsException):
@@ -81,19 +86,19 @@ class ErrorResponse:
 #         #     if exception.missing_fields == ['name', 'code', 'sign']:
 #         #         error_code = 400
 #         #         error_message = "Отсутствует обязательное поле формы: name, code, sign"
-        #     elif exception.currency_not_found:
-        #         error_code = 404
-        #         error_message = "Валюта не найдена"
-        #     elif exception.exchange_rate_not_found:
-        #         error_code = 404
-        #         error_message = "Обменный курс для пары не найден"
-        #     else:
-        #         error_code = 400
-        # #         error_message = "Запрос не верен"
-        # if isinstance(exception, sqlite3.IntegrityError):
-        #     error_code = 409
-        #     error_message = f"Валюта с этим кодом уже существует"
-        # return {error_code: error_message}
+#     elif exception.currency_not_found:
+#         error_code = 404
+#         error_message = "Валюта не найдена"
+#     elif exception.exchange_rate_not_found:
+#         error_code = 404
+#         error_message = "Обменный курс для пары не найден"
+#     else:
+#         error_code = 400
+# #         error_message = "Запрос не верен"
+# if isinstance(exception, sqlite3.IntegrityError):
+#     error_code = 409
+#     error_message = f"Валюта с этим кодом уже существует"
+# return {error_code: error_message}
 
 # print(isinstance(ErrorResponse.error_response(exception=sqlite3.DatabaseError()), ErrorResponse))
 # if isinstance(exception, (ValueError, TypeError)):
