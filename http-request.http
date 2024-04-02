@@ -1,4 +1,4 @@
-GET http://localhost:8080/exchange?from=&to=BDT&amount=0
+GET http://localhost:8080/exchange?from=AUD&to=YYY&amount=10
 
 ###
 GET http://localhost:8080/exchange?from=AUD&to=BDT&amount=10
@@ -29,11 +29,6 @@ Accept: application/json
 ###
 GET http://localhost:8080/exchangeRate
 Accept: application/json
-
-###
-GET http://localhost:8080/exchangeRate
-Accept: application/json
-
 
 ###
 GET http://localhost:8080/exchangeRate/EURWWW

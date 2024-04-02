@@ -78,7 +78,3 @@ class RateController(BaseController):
                 self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
 
 
-a = RateController()
-
-print(a.do_GET(''))
-print(a.do_GET('RUBAUD'))

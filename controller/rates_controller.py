@@ -8,7 +8,7 @@ from loguru import logger
 import dao.rates_DAO
 import env
 from controller.base_controller import BaseController
-from error_response import ErrorResponse
+from error_response import ErrorResponse, DatabaseErrorException
 
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -26,8 +26,8 @@ class RatesController(BaseController):
             return response
         except IndexError:
             return ErrorResponse.error_response(exception=IndexError())
-        except sqlite3.DatabaseError:
-            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
+        except sqlite3.OperationalError:
+            return ErrorResponse.error_response(exception=DatabaseErrorException())
 
     @logger.catch
     def do_POST(self):
@@ -74,3 +74,4 @@ class RatesController(BaseController):
             self.send_header('Content-Type', 'text/plain')
             self.end_headers()
             self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
+

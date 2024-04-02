@@ -1,10 +1,12 @@
+import sqlite3
+
 import dao.rates_DAO
 import dto.service_DTO
 import env
 
 from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
-from error_response import ErrorResponse, CurrencyNotFoundException
+from error_response import ErrorResponse, CurrencyNotFoundException, DatabaseErrorException
 
 
 class ServiceExchange(BaseController):
@@ -41,4 +43,6 @@ class ServiceExchange(BaseController):
             return response
         except IndexError:
             return ErrorResponse.error_response(exception=CurrencyNotFoundException())
+        except sqlite3.OperationalError:
+            return ErrorResponse.error_response(exception=DatabaseErrorException())
 
