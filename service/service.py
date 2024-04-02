@@ -1,13 +1,10 @@
-import sqlite3
-from http.client import HTTPException
-
 import dao.rates_DAO
 import dto.service_DTO
 import env
 
 from controller.base_controller import BaseController
 from dao.currencies_DAO import CurrencyDAO
-from error_response import ErrorResponse
+from error_response import ErrorResponse, CurrencyNotFoundException
 
 
 class ServiceExchange(BaseController):
@@ -42,10 +39,6 @@ class ServiceExchange(BaseController):
                                               amount,
                                               round(float(rate * amount), 6)).to_dict()
             return response
-        except HTTPException:
-            return ErrorResponse.error_response(exception=HTTPException())
         except IndexError:
-            return ErrorResponse.error_response(exception=IndexError())
-        except sqlite3.DatabaseError:
-            return ErrorResponse.error_response(exception=sqlite3.DatabaseError())
+            return ErrorResponse.error_response(exception=CurrencyNotFoundException())
 
