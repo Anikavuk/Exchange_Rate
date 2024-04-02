@@ -76,7 +76,7 @@ class ExchangeDAO:
             conn.commit()
 
     def update_rate(self, baseCode, targetCode, rate):
-        """метод изенения курса валют в базе данных
+        """метод изменения курса валют в базе данных
         :@param baseCode: Code базовой валюты
         :@param targetCode: Code целевой валюты
         :@param rate: новый обменный курс

@@ -60,7 +60,7 @@ class Server(BaseHTTPRequestHandler):
         post_data_dict = dict(urllib.parse.parse_qsl(post_data))
 
         if self.path == '/exchangeRates':
-            rates_obj = CurrenciesController()
+            rates_obj = RatesController()
             response = rates_obj.do_POST(post_data_dict)
         if self.path == '/currencies':
             currencies_obj = CurrenciesController()

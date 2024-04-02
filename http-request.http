@@ -20,7 +20,7 @@ rate=100
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
 
-baseCurrencyCode=ttt&targetCurrencyCode=GGG&rate=100000
+baseCurrencyCode=AUD&targetCurrencyCode=KZT&rate=100000
 
 ###
 GET http://localhost:8080/exchangeRates
@@ -42,7 +42,7 @@ Accept: application/json
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
-name=RRR&code=WWWt&sign=%
+name=LLL iii&code=LILt&sign=U
 
 ###
 POST http://localhost:8080/currencies
