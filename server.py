@@ -79,12 +79,13 @@ class Server(BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode('utf-8')
         post_data_dict = dict(urllib.parse.parse_qsl(post_data))
-        parsed_url = urllib.parse.urlparse(self.path)
-        code = parsed_url.path.split('/')[-1]
-
-        if self.path == '/exchangeRate':
-            rate_obj = RateController()
-            response = rate_obj.do_PATCH(code, post_data_dict)
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path.split('/')[1]
+        if path in router.router.routes:
+            handler_class = router.router.routes[path]
+            if isinstance(handler_class(), RateController):
+                code = parsed_url.path.split('/')[-1]
+                response = handler_class.do_PATCH(self, code, post_data_dict)
 
         if len(response) == 1:
             self.send_error_response(response)

@@ -11,10 +11,10 @@ GET http://localhost:8080/exchange?from=EUR&to=RUB&amount=10
 
 
 ###
-PATCH http://localhost:8080/exchangeRate/EURRUB
+PATCH http://localhost:8080/exchangeRate/
 Content-Type: application/x-www-form-urlencoded
 
-rate=100
+rate=80
 
 ###
 POST http://localhost:8080/exchangeRates
