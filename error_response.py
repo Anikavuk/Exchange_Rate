@@ -48,13 +48,13 @@ class ErrorResponse:
         elif isinstance(exception, IndexError):
             error_code = 404
             error_message = "Обменный курс для пары не найден"
-        # elif isinstance(exception, ExchangeRateNotFoundException):
+        elif isinstance(exception, ExchangeRateNotFoundException):
         #     if exception.value == 'get_rate':
         #         error_code = 404
         #         error_message = "Обменный курс для пары не найден"
-        #     elif exception.value == 'patch_rate':
-        #         error_code = 404
-        #         error_message = "Валютная пара отсутствует в базе данных"
+            if exception.value == 'post_rate':
+                error_code = 404
+                error_message = "Валютная пара отсутствует в базе данных"
         elif isinstance(exception, CurrencyAlreadyExistsException):
             if exception.value == 'code':
                 error_code = 409
