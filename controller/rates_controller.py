@@ -1,15 +1,11 @@
-import json
 import sqlite3
-import urllib.request
-from urllib.parse import parse_qs
 
 from loguru import logger
 
 import dao.rates_DAO
 import env
 from controller.base_controller import BaseController
-from error_response import ErrorResponse, DatabaseErrorException, MissingFieldsException, \
-    CurrencyAlreadyExistsException, ExchangeRateNotFoundException
+from error_response import ErrorResponse, DatabaseErrorException, MissingFieldsException, ExchangeRateNotFoundException
 
 logger.add('rates_controller.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
 
@@ -40,8 +36,6 @@ class RatesController(BaseController):
                 raise MissingFieldsException('full_name, code, sign')
 
             save_rate = dao.rates_DAO.ExchangeDAO(env.path_to_database).save_rate(baseCurrency, targetCurrency, rate)
-            # if save_rate is None:
-            #     raise CurrencyAlreadyExistsException('rate')
             response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(
                 baseCurrency + targetCurrency)
             return response
@@ -51,5 +45,3 @@ class RatesController(BaseController):
             return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=DatabaseErrorException())
-
-

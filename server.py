@@ -76,17 +76,20 @@ class Server(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
     def do_PATCH(self):
-        parsed_url = urllib.urlparse(self.path)
-        path = parsed_url.path
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('utf-8')
+        post_data_dict = dict(urllib.parse.parse_qsl(post_data))
+        parsed_url = urllib.parse.urlparse(self.path)
+        code = parsed_url.path.split('/')[-1]
 
-        if path in router.router.routes:
-            handler = router.router.routes[path]()
-            handler.handle_request('PATCH')
+        if self.path == '/exchangeRate':
+            rate_obj = RateController()
+            response = rate_obj.do_PATCH(code, post_data_dict)
+
+        if len(response) == 1:
+            self.send_error_response(response)
         else:
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html')
+            self.send_response(201)
+            self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(b'Not Found')
-
-# a = Server()
-# a
+            self.wfile.write(json.dumps(response).encode('utf-8'))

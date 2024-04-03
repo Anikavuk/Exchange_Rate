@@ -1,7 +1,4 @@
-import json
 import sqlite3
-import urllib.request
-from urllib.parse import urlencode
 
 from loguru import logger
 
@@ -39,42 +36,21 @@ class RateController(BaseController):
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=DatabaseErrorException())
 
-    def do_PATCH(self):
-        parsed_url = urllib.parse.urlparse(self.path)
-        code = parsed_url.path.split('/')[-1]
-        if len(code) == 6:
-            try:
-                content_length = int(self.headers['Content-Length'])
-                post_data = self.rfile.read(content_length).decode('utf-8')
-                post_data_dict = dict(urllib.parse.parse_qsl(post_data))
-
+    def do_PATCH(self, code, post_data_dict):
+        try:
+            if len(code) == 6:
                 rate = post_data_dict.get("rate")
                 if rate is None:
-                    self.send_response(400)
-                    self.send_header('Content-Type', "application/json")
-                    self.end_headers()
-                    self.wfile.write(f"The required form field is missing: rate".encode('utf-8'))
-                    return
+                    raise MissingFieldsException('full_name, code, sign')
 
                 save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate(code[:3],
                                                                                             code[3:],
                                                                                             rate)
                 response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-
-            except IndexError:
-                self.send_response(404)
-                self.send_header('Content-Type', 'text/plain')
-                self.end_headers()
-                self.wfile.write(f'The currency pair is missing from the database'.encode('utf-8'))
-
-            except sqlite3.DatabaseError as e:
-                self.send_response(500)
-                self.send_header('Content-Type', 'text/plain')
-                self.end_headers()
-                self.wfile.write("The database is unavailable: {}".format(e).encode('utf-8'))
-
-
+                return response
+        except MissingFieldsException:
+            return ErrorResponse.error_response(exception=MissingFieldsException('full_name, code, sign'))
+        except IndexError:
+            return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
+        except sqlite3.DatabaseError:
+            return ErrorResponse.error_response(exception=DatabaseErrorException())
