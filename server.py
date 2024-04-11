@@ -24,6 +24,7 @@ class Server(BaseHTTPRequestHandler):
         error_message = error_response[error_code]
         self.send_response(error_code)
         self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(error_message.encode('utf-8'))
 
@@ -50,6 +51,7 @@ class Server(BaseHTTPRequestHandler):
         else:
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -72,6 +74,7 @@ class Server(BaseHTTPRequestHandler):
         else:
             self.send_response(201)
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -92,5 +95,6 @@ class Server(BaseHTTPRequestHandler):
         else:
             self.send_response(201)
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
