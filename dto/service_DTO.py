@@ -1,6 +1,3 @@
-import env
-from env import path_to_database
-from  dao.currencies_DAO import CurrencyDAO
 class ServiceDTO:
 
     def __init__(self, baseCurrency, targetCurrency, rate, amount, convertedAmount):

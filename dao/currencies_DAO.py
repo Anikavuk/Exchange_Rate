@@ -1,7 +1,5 @@
 import sqlite3 as sq
 
-import env
-from env import path_to_database
 from model.currencies import *
 
 
