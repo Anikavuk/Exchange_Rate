@@ -25,6 +25,7 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(error_code)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')  # Замените на адрес вашего фронтенд приложения
         self.end_headers()
         self.wfile.write(error_message.encode('utf-8'))
 
@@ -52,6 +53,7 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -75,6 +77,7 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(201)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -96,5 +99,6 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(201)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
