@@ -25,7 +25,7 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers',
                          'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range')
         self.send_header('Access-Control-Allow-Credentials', 'true')
-        self.send_header('Access-Control-Max-Age', '86400')
+
         self.end_headers()
 
     def send_error_response(self, error_response):
