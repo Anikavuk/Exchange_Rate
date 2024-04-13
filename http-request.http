@@ -1,3 +1,16 @@
+PATCH http://localhost:8080
+    Accept: application/json
+
+###
+#OPTIONS http://localhost:8080
+#
+#
+##OPTIONS http://localhost:8080//exchangeRate/USDRUB
+##Host: 127.0.0.1
+##Origin: http://your-origin-url
+##Access-Control-Request-Method: PATCH
+##Access-Control-Request-Headers: Content-Type
+
 ###
 GET http://localhost:8080/exchange?from=AUD&to=YYY&amount=10
 

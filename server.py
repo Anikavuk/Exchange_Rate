@@ -22,7 +22,10 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Headers',
+                         'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range')
+        self.send_header('Access-Control-Allow-Credentials', 'true')
+        self.send_header('Access-Control-Max-Age', '86400')
         self.end_headers()
 
     def send_error_response(self, error_response):
@@ -31,7 +34,6 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(error_code)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
-        # self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')  # Замените на адрес вашего фронтенд приложения
         self.end_headers()
         self.wfile.write(error_message.encode('utf-8'))
 
@@ -58,8 +60,6 @@ class Server(BaseHTTPRequestHandler):
         else:
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            # self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -81,9 +81,8 @@ class Server(BaseHTTPRequestHandler):
             self.send_error_response(response)
         else:
             self.send_response(201)
-            self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
-            # self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
+            self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
@@ -103,8 +102,8 @@ class Server(BaseHTTPRequestHandler):
             self.send_error_response(response)
         else:
             self.send_response(201)
-            self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
-            # self.send_header('Access-Control-Allow-Origin', 'http://79.174.80.223:63342')
+            self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
+
