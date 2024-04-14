@@ -2,7 +2,7 @@ PATCH http://localhost:8080
     Accept: application/json
 
 ###
-#OPTIONS http://localhost:8080
+OPTIONS http://localhost:8080
 #
 #
 ##OPTIONS http://localhost:8080//exchangeRate/USDRUB
