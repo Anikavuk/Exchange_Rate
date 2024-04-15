@@ -75,6 +75,7 @@ class Server(BaseHTTPRequestHandler):
         if self.path == '/currencies':
             currencies_obj = CurrenciesController()
             response = currencies_obj.do_POST(post_data_dict)
+            
 
 
         if len(response) == 1:
