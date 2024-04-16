@@ -1,15 +1,22 @@
-PATCH http://localhost:8080
-    Accept: application/json
-
+OPTIONS /exchangeRate/USDRUB HTTP/1.1
+Host: localhost:8080
 ###
-OPTIONS http://localhost:8080
+
+
+#OPTIONS http://localhost:8080/exchangeRate/USDRUB
+#Access-Control-Allow-Origin: '*'
+##
+##rate=80000
+###
+#OPTIONS http://localhost:8080
 #
 #
-##OPTIONS http://localhost:8080//exchangeRate/USDRUB
-##Host: 127.0.0.1
-##Origin: http://your-origin-url
-##Access-Control-Request-Method: PATCH
-##Access-Control-Request-Headers: Content-Type
+OPTIONS http://localhost:8080//exchangeRate/USDRUB?rate=800000
+Host: 127.0.0.1
+Origin: http://localhost:8080//exchangeRate/USDRUB
+Access-Control-Request-Method: PATCH
+Access-Control-Request-Headers: Content-Type
+
 
 ###
 GET http://localhost:8080/exchange?from=AUD&to=YYY&amount=10
@@ -21,14 +28,14 @@ GET http://localhost:8080/exchange?from=AUD&to=BDT&amount=10
 GET http://localhost:8080/exchange?from=RUB&to=EUR&amount=10
 
 ###
-GET http://localhost:8080/exchange?from=EUR&to=RUB&amount=10
+GET http://localhost:8080/exchange?from=USD&to=RUB&amount=10
 
 
 ###
-PATCH http://localhost:8080/exchangeRate/
+PATCH http://localhost:8080/exchangeRate/USDRUB
 Content-Type: application/x-www-form-urlencoded
 
-rate=80
+rate=80000
 
 ###
 POST http://localhost:8080/exchangeRates
@@ -53,10 +60,10 @@ GET http://localhost:8080/exchangeRate/USDEUR
 Accept: application/json
 
 ###
-POST http://localhost:8080/currencies
-Content-Type: application/x-www-form-urlencoded
-
-name=LLL iii&code=LILt&sign=U
+#POST http://localhost:8080/currencies
+#Content-Type: application/x-www-form-urlencoded
+#
+#name=LLL iii&code=LILt&sign=U
 
 ###
 POST http://localhost:8080/currencies
@@ -75,7 +82,7 @@ name=EEE&code=ккк
 POST http://localhost:8080/currencies
 Content-Type: application/x-www-form-urlencoded
 
-name=Грузин&code=ГРУ&sign=GGG
+name=Belarusian ruble&code=BYN&sign=Br
 
 ###
 
@@ -118,6 +125,7 @@ Accept: application/json
 ###
 GET http://localhost:8080/currency/FFF
 Accept: application/json
+
 
 <> 2024-02-08T151412.200.json
 <> 2024-02-08T151305.200.json

@@ -21,7 +21,7 @@ class Server(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'PATCH, OPTIONS')
         self.send_header('Access-Control-Allow-Headers',
                          'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range')
         self.send_header('Access-Control-Allow-Credentials', 'true')
