@@ -19,15 +19,13 @@ logger.add('server.log', format="{time} {level} {message}", level="DEBUG", seria
 
 class Server(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
-        self.send_response(200)
+        self.send_response(204)
+        self.send_header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,OPTIONS')
+        self.send_header('Access-Control-Max-Age', '1728000')
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'PATCH, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers',
-                         'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range')
-        self.send_header('Access-Control-Allow-Credentials', 'true')
-        self.send_header('Access-Control-Max-Age', '86400')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Accept')
+        self.send_header('Content-Type', 'application/json')
         self.end_headers()
-
     def send_error_response(self, error_response):
         error_code = list(error_response.keys())[0]
         error_message = error_response[error_code]
@@ -59,6 +57,7 @@ class Server(BaseHTTPRequestHandler):
             self.send_error_response(response)
         else:
             self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))

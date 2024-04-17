@@ -1,4 +1,8 @@
-OPTIONS /exchangeRate/USDRUB HTTP/1.1
+GET http://79.174.80.223:8080/currencies
+
+
+###
+OPTIONS http://localhost:8080/exchangeRate/USDRUB
 Host: localhost:8080
 ###
 
@@ -11,7 +15,7 @@ Host: localhost:8080
 #OPTIONS http://localhost:8080
 #
 #
-OPTIONS http://localhost:8080//exchangeRate/USDRUB?rate=800000
+OPTIONS http://localhost:8080//exchangeRate/USDRUB?rate=2
 Host: 127.0.0.1
 Origin: http://localhost:8080//exchangeRate/USDRUB
 Access-Control-Request-Method: PATCH
@@ -33,9 +37,9 @@ GET http://localhost:8080/exchange?from=USD&to=RUB&amount=10
 
 ###
 PATCH http://localhost:8080/exchangeRate/USDRUB
-Content-Type: application/x-www-form-urlencoded
+Access-Control-Allow-Origin: '*'
 
-rate=80000
+rate=2
 
 ###
 POST http://localhost:8080/exchangeRates
@@ -52,7 +56,7 @@ GET http://localhost:8080/exchangeRate
 Accept: application/json
 
 ###
-GET http://localhost:8080/exchangeRate/EURWWW
+GET http://localhost:8080/exchangeRate/USDRUB
 Accept: application/json
 
 ###
