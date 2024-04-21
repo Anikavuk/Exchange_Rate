@@ -55,3 +55,5 @@ class RateController(BaseController):
             return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
         except sqlite3.DatabaseError:
                 return ErrorResponse.error_response(exception=DatabaseErrorException())
+
+

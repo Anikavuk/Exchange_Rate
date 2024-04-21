@@ -25,6 +25,8 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Accept')
         self.send_header('Content-Type', 'application/json')
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header("Cache-Control", "no-cache")
         self.end_headers()
     def send_error_response(self, error_response):
         error_code = list(error_response.keys())[0]
@@ -32,6 +34,8 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(error_code)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header("Cache-Control", "no-cache")
         self.end_headers()
         self.wfile.write(error_message.encode('utf-8'))
 
@@ -59,32 +63,44 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
     @logger.catch
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length).decode('utf-8')
-        post_data_dict = dict(urllib.parse.parse_qsl(post_data))
+        content_type = self.headers.get('Content-Type')
+        if content_type == 'application/x-www-form-urlencoded':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            post_data_dict = dict(urllib.parse.parse_qsl(post_data))
 
-        if self.path == '/exchangeRates':
-            rates_obj = RatesController()
-            response = rates_obj.do_POST(post_data_dict)
-        if self.path == '/currencies':
-            currencies_obj = CurrenciesController()
-            response = currencies_obj.do_POST(post_data_dict)
+        # content_length = int(self.headers['Content-Length'])
+        # post_data = self.rfile.read(content_length).decode('utf-8')
+        # post_data_dict = dict(urllib.parse.parse_qsl(post_data))
+
+            if self.path == '/exchangeRates':
+                rates_obj = RatesController()
+                response = rates_obj.do_POST(post_data_dict)
+            if self.path == '/currencies':
+                currencies_obj = CurrenciesController()
+                response = currencies_obj.do_POST(post_data_dict)
             
-
-
-        if len(response) == 1:
-            self.send_error_response(response)
-        else:
-            self.send_response(201)
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps(response).encode('utf-8'))
+            if len(response) == 1:
+                self.send_error_response(response)
+            else:
+                self.send_response(201)
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('X-Content-Type-Options', 'nosniff')
+                self.send_header("Cache-Control", "no-cache")
+                self.end_headers()
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+        # else:
+        #     self.send_response(400)
+        #     self.end_headers()
+        #     self.wfile.write(b'Bad Request: Invalid Content-Type')
 
     def do_PATCH(self):
         content_length = int(self.headers['Content-Length'])
@@ -104,6 +120,8 @@ class Server(BaseHTTPRequestHandler):
             self.send_response(201)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
 

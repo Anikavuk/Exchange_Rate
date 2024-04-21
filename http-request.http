@@ -39,13 +39,13 @@ GET http://localhost:8080/exchange?from=USD&to=RUB&amount=10
 PATCH http://localhost:8080/exchangeRate/USDRUB
 Access-Control-Allow-Origin: '*'
 
-rate=2
+rate=33333
 
 ###
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded
 
-baseCurrencyCode=AUD&targetCurrencyCode=KZT&rate=100000
+baseCurrencyCode=AUD&targetCurrencyCode=THB&rate=5
 
 ###
 GET http://localhost:8080/exchangeRates
@@ -56,7 +56,7 @@ GET http://localhost:8080/exchangeRate
 Accept: application/json
 
 ###
-GET http://localhost:8080/exchangeRate/USDRUB
+GET http://localhost:8080/exchangeRate/AUDKZT
 Accept: application/json
 
 ###
@@ -64,10 +64,10 @@ GET http://localhost:8080/exchangeRate/USDEUR
 Accept: application/json
 
 ###
-#POST http://localhost:8080/currencies
-#Content-Type: application/x-www-form-urlencoded
-#
-#name=LLL iii&code=LILt&sign=U
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded
+
+name=Brazilian real&code= BRL&sign= R$
 
 ###
 POST http://localhost:8080/currencies

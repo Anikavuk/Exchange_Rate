@@ -92,3 +92,5 @@ class ExchangeDAO:
                      WHERE BaseCurrencyld = ? AND TargetCurrencyld = ?'
             cur.execute(query, (rate, base, target))
             conn.commit()
+
+
