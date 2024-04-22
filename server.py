@@ -1,4 +1,5 @@
 import json
+import sys
 import urllib
 import urllib.parse
 from decimal import Decimal
@@ -14,7 +15,8 @@ from controller.rate_controller import RateController
 from controller.rates_controller import RatesController
 from service.service import ServiceExchange
 
-logger.add('server.log', format="{time} {level} {message}", level="DEBUG", serialize=True)
+logger.add(sys.stdout, format="{time} {level} {message}", level="DEBUG", serialize=True)
+logger.info('Server Started')
 
 
 class Server(BaseHTTPRequestHandler):
@@ -41,6 +43,7 @@ class Server(BaseHTTPRequestHandler):
 
     @logger.catch
     def do_GET(self):
+        logger.info('GET request')
         parsed_url = urlparse(self.path)
         path = parsed_url.path.split('/')[1]
         if path in router.router.routes:
@@ -71,14 +74,10 @@ class Server(BaseHTTPRequestHandler):
     @logger.catch
     def do_POST(self):
         content_type = self.headers.get('Content-Type')
-        if content_type == 'application/x-www-form-urlencoded':
+        if content_type.startswith('application/x-www-form-urlencoded'):
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length).decode('utf-8')
             post_data_dict = dict(urllib.parse.parse_qsl(post_data))
-
-        # content_length = int(self.headers['Content-Length'])
-        # post_data = self.rfile.read(content_length).decode('utf-8')
-        # post_data_dict = dict(urllib.parse.parse_qsl(post_data))
 
             if self.path == '/exchangeRates':
                 rates_obj = RatesController()
@@ -97,10 +96,6 @@ class Server(BaseHTTPRequestHandler):
                 self.send_header("Cache-Control", "no-cache")
                 self.end_headers()
                 self.wfile.write(json.dumps(response).encode('utf-8'))
-        # else:
-        #     self.send_response(400)
-        #     self.end_headers()
-        #     self.wfile.write(b'Bad Request: Invalid Content-Type')
 
     def do_PATCH(self):
         content_length = int(self.headers['Content-Length'])
