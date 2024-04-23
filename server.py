@@ -40,7 +40,9 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header("Cache-Control", "no-cache")
         self.end_headers()
-        self.wfile.write(error_message.encode('utf-8'))
+        response_message = {'message': error_message}
+        response_body = json.dumps(response_message).encode('utf-8')
+        self.wfile.write(response_body)
 
     @logger.catch
     def do_GET(self):
@@ -120,26 +122,3 @@ class Server(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             self.wfile.write(json.dumps(response).encode('utf-8'))
-    #
-    # def do_PATCH(self):
-    #     content_length = int(self.headers['Content-Length'])
-    #     post_data = self.rfile.read(content_length).decode('utf-8')
-    #     post_data_dict = dict(urllib.parse.parse_qsl(post_data))
-    #     parsed_url = urlparse(self.path)
-    #     path = parsed_url.path.split('/')[1]
-    #     if path in router.router.routes:
-    #         handler_class = router.router.routes[path]
-    #         if isinstance(handler_class(), RateController):
-    #             code = parsed_url.path.split('/')[-1]
-    #             response = handler_class.do_PATCH(self, code, post_data_dict)
-    #
-    #     if len(response) == 1:
-    #         self.send_error_response(response)
-    #     else:
-    #         self.send_response(201)
-    #         self.send_header('Access-Control-Allow-Origin', '*')
-    #         self.send_header('Content-Type', 'application/json')
-    #         self.send_header('X-Content-Type-Options', 'nosniff')
-    #         self.send_header("Cache-Control", "no-cache")
-    #         self.end_headers()
-    #         self.wfile.write(json.dumps(response).encode('utf-8'))

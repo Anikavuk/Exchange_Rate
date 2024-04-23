@@ -17,9 +17,7 @@ class CurrencyController(BaseController):
 
     @logger.catch
     def do_GET(self, code):
-        """
-        Метод получения конкретной валюты
-        """
+        """Метод получения конкретной валюты"""
         try:
             if code is None or len(code) != 3:
                 raise MissingFieldsException('code')

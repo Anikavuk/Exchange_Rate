@@ -37,7 +37,7 @@ class RateController(BaseController):
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=DatabaseErrorException())
 
-    def do_PATCH(self, name_currencies, post_data_dict): # US DollarRussian Ruble
+    def do_PATCH(self, name_currencies, post_data_dict):
         try:
             if name_currencies:
                 rate = post_data_dict.get("rate")
@@ -59,24 +59,3 @@ class RateController(BaseController):
             return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
         except sqlite3.DatabaseError:
                 return ErrorResponse.error_response(exception=DatabaseErrorException())
-
-
-#     # def do_PATCH(self, code, post_data_dict):
-    #     try:
-    #         if len(code) == 6:
-    #             rate = post_data_dict.get("rate")
-    #             if rate is None:
-    #                 raise MissingFieldsException('full_name, code, sign')
-    #
-    #             save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate(code[:3], code[3:],
-    #                                                                                         rate)
-    #             response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
-    #             return response
-    #         else:
-    #             raise MissingFieldsException('full_name, code, sign')
-    #     except MissingFieldsException:
-    #         return ErrorResponse.error_response(exception=MissingFieldsException('full_name, code, sign'))
-    #     except IndexError:
-    #         return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
-    #     except sqlite3.DatabaseError:
-    #             return ErrorResponse.error_response(exception=DatabaseErrorException())
