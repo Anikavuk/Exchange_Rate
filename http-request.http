@@ -1,3 +1,17 @@
+PATCH http://localhost:8080/exchangeRate/US%20DollarRussian%20Ruble
+Content-Type: application/x-www-form-urlencoded
+
+rate = 5
+
+###
+POST http://localhost:8080/currencies
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+code = OOO &
+name = GGG+dollar &
+sign = %3F
+
+###
 GET http://79.174.80.223:8080/currencies
 
 
@@ -41,6 +55,8 @@ Access-Control-Allow-Origin: '*'
 
 rate=33333
 
+###
+PATCH http://localhost:8080/exchangeRate/
 ###
 POST http://localhost:8080/exchangeRates
 Content-Type: application/x-www-form-urlencoded

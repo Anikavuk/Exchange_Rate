@@ -12,12 +12,10 @@ class ExchangeDAO:
     def __init__(self, db_file):
         self.__file = db_file
 
-    def get_specific_exchange_rate(self, code: object) -> object:
-        """Метод получения конкретного обменного курса валют.
-        :@param code - код валюты, например, 'USDEUR'
-        """
-        base = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code[:3])
-        target = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code[3:])
+    def get_exchange_rate_by_name(self, baseName, targetName) -> object:
+        """Метод получения конкретного курса"""
+        base = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_name(baseName)
+        target = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_name(targetName)
         baseCurrency = dto.currencies_DTO.CurrencyDTO(base.id, base.full_name, base.code, base.sign).to_dict()
         targetCurrency = dto.currencies_DTO.CurrencyDTO(target.id, target.full_name, target.code, target.sign).to_dict()
         with sq.connect(self.__file) as conn:
@@ -75,6 +73,24 @@ class ExchangeDAO:
             cur.execute(query, (base, target, rate, base, target))
             conn.commit()
 
+    def update_rate_by_currency_name(self, baseName, targetName, rate):
+        """метод изменения курса валют в базе данных
+        :@param baseName: name базовой валюты
+        :@param targetName: name целевой валюты
+        :@param rate: новый обменный курс
+        """
+        baseCurrency = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_name(baseName)
+        targetCurrency = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_name(targetName)
+        base = baseCurrency.id
+        target = targetCurrency.id
+        with sq.connect(self.__file) as conn:
+            cur = conn.cursor()
+            query = 'UPDATE exchange_rates \
+                     SET Rate = ? \
+                     WHERE BaseCurrencyld = ? AND TargetCurrencyld = ?'
+            cur.execute(query, (rate, base, target))
+            conn.commit()
+
     def update_rate(self, baseCode, targetCode, rate):
         """метод изменения курса валют в базе данных
         :@param baseCode: Code базовой валюты
@@ -92,5 +108,22 @@ class ExchangeDAO:
                      WHERE BaseCurrencyld = ? AND TargetCurrencyld = ?'
             cur.execute(query, (rate, base, target))
             conn.commit()
+    def get_specific_exchange_rate(self, code: object) -> object:
+        """Метод получения конкретного обменного курса.
+        :@param code - код валюты, например, 'USDEUR'
+        """
+        base = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code[:3])
+        target = dao.currencies_DAO.CurrencyDAO(env.path_to_database).find_by_code(code[3:])
+        baseCurrency = dto.currencies_DTO.CurrencyDTO(base.id, base.full_name, base.code, base.sign).to_dict()
+        targetCurrency = dto.currencies_DTO.CurrencyDTO(target.id, target.full_name, target.code, target.sign).to_dict()
+        with sq.connect(self.__file) as conn:
+            cur = conn.cursor()
+            cur.execute('SELECT * FROM exchange_rates WHERE BaseCurrencyld=? AND TargetCurrencyld=?',
+                        (base.id, target.id))
+            response = cur.fetchall()
+            conn.commit()
+        if not response:
+            return []
+        return dto.rates_DTO.ExchangeRatesDTO(response[0][0], baseCurrency, targetCurrency, response[0][3]).to_dict()
 
 

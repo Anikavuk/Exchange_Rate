@@ -1,4 +1,5 @@
 import sqlite3
+import sys
 
 from loguru import logger
 
@@ -7,7 +8,7 @@ import env
 from controller.base_controller import BaseController
 from error_response import ErrorResponse, MissingFieldsException, ExchangeRateNotFoundException, DatabaseErrorException
 
-logger.add('rate_errors.log', format="{time} {level} {message}", level="ERROR", serialize=True)
+logger.add(sys.stdout, format="{time} {level} {message}", level="ERROR", serialize=True)
 
 
 class RateController(BaseController):
@@ -36,16 +37,19 @@ class RateController(BaseController):
         except sqlite3.DatabaseError:
             return ErrorResponse.error_response(exception=DatabaseErrorException())
 
-    def do_PATCH(self, code, post_data_dict):
+    def do_PATCH(self, name_currencies, post_data_dict): # US DollarRussian Ruble
         try:
-            if len(code) == 6:
+            if name_currencies:
                 rate = post_data_dict.get("rate")
                 if rate is None:
                     raise MissingFieldsException('full_name, code, sign')
-
-                save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate(code[:3], code[3:],
+                currencies = name_currencies.split(" ")
+                baseName = currencies[0]
+                targetName = currencies[-1]
+                save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate_by_currency_name(baseName,
+                                                                                            targetName,
                                                                                             rate)
-                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
+                response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_exchange_rate_by_name(baseName, targetName)
                 return response
             else:
                 raise MissingFieldsException('full_name, code, sign')
@@ -57,3 +61,22 @@ class RateController(BaseController):
                 return ErrorResponse.error_response(exception=DatabaseErrorException())
 
 
+#     # def do_PATCH(self, code, post_data_dict):
+    #     try:
+    #         if len(code) == 6:
+    #             rate = post_data_dict.get("rate")
+    #             if rate is None:
+    #                 raise MissingFieldsException('full_name, code, sign')
+    #
+    #             save_response = dao.rates_DAO.ExchangeDAO(env.path_to_database).update_rate(code[:3], code[3:],
+    #                                                                                         rate)
+    #             response = dao.rates_DAO.ExchangeDAO(env.path_to_database).get_specific_exchange_rate(code)
+    #             return response
+    #         else:
+    #             raise MissingFieldsException('full_name, code, sign')
+    #     except MissingFieldsException:
+    #         return ErrorResponse.error_response(exception=MissingFieldsException('full_name, code, sign'))
+    #     except IndexError:
+    #         return ErrorResponse.error_response(exception=ExchangeRateNotFoundException('post_rate'))
+    #     except sqlite3.DatabaseError:
+    #             return ErrorResponse.error_response(exception=DatabaseErrorException())

@@ -27,6 +27,7 @@ class CurrenciesController(BaseController):
 
     @logger.catch
     def do_POST(self, post_data_dict):
+        logger.debug(post_data_dict)
         try:
             full_name = post_data_dict.get("name")
             code = post_data_dict.get("code")

@@ -1,22 +1,23 @@
 import sqlite3 as sq
 
+import env
 from model.currencies import *
 
 
 class CurrencyDAO:
-    """Класс для работы с базой данных таблицей currencies"""
+    """Класс для работы с базой данных таблицы currencies"""
 
     def __init__(self, path_to_database: object):
         self.__file = path_to_database
 
-    def find_by_code(self, code: object) -> object:
+    def find_by_name(self, name: object) -> object:
         """
         Метод поиска валюты по Code из таблицы currencies
         :param code код валюты
         """
         with sq.connect(self.__file) as conn:
             cur = conn.cursor()
-            cur.execute('SELECT * FROM currencies WHERE Code=?', (code,))
+            cur.execute("SELECT * FROM currencies WHERE FULL_Name LIKE ? || '%' OR FULL_Name LIKE '%' || ?", (name, name))
             response = cur.fetchall()
             conn.commit()
         return Currency(response[0][0], response[0][1], response[0][2], response[0][3])
@@ -43,3 +44,15 @@ class CurrencyDAO:
             cur = conn.cursor()
             cur.execute('insert into currencies values (NULL, ?, ?, ?)', (code, full_name, sign))
             conn.commit()
+
+    def find_by_code(self, code: object) -> object:
+        """
+        Метод поиска валюты по Code из таблицы currencies
+        :param code код валюты
+        """
+        with sq.connect(self.__file) as conn:
+            cur = conn.cursor()
+            cur.execute('SELECT * FROM currencies WHERE Code=?', (code,))
+            response = cur.fetchall()
+            conn.commit()
+        return Currency(response[0][0], response[0][1], response[0][2], response[0][3])
